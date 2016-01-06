@@ -5,6 +5,7 @@ import com.angeldfg.saveearth.Assets.LoadAssets;
 import com.angeldfg.saveearth.Model.Planet;
 import com.angeldfg.saveearth.Model.World3D;
 import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.PerspectiveCamera;
 import com.badlogic.gdx.graphics.g3d.Environment;
@@ -14,6 +15,7 @@ import com.badlogic.gdx.graphics.g3d.ModelBatch;
 import com.badlogic.gdx.graphics.g3d.ModelInstance;
 import com.badlogic.gdx.graphics.g3d.attributes.ColorAttribute;
 import com.badlogic.gdx.graphics.g3d.attributes.TextureAttribute;
+import com.badlogic.gdx.graphics.g3d.environment.PointLight;
 import com.badlogic.gdx.graphics.g3d.utils.CameraInputController;
 import com.badlogic.gdx.math.Vector3;
 import com.badlogic.gdx.utils.Array;
@@ -25,6 +27,7 @@ public class GameRenderer {
 
     private PerspectiveCamera camara3D;
     private Array<ModelInstance> instances;
+    private ModelInstance instanceSun;  // Envrironment not affect => render
     private Array<ModelInstance> planetsInstances;
 
 
@@ -35,6 +38,8 @@ public class GameRenderer {
 
     private World3D world3d;
     private Vector3 temp;
+
+    private PointLight pointLight;
 
     public GameRenderer(World3D world3d){
 
@@ -58,15 +63,29 @@ public class GameRenderer {
         for (Planet planet : world3d.getPlanets()){
 
             ModelInstance modelInstance = new ModelInstance(modelPlanet);
+            //modelInstance.getNode("sphere6_sphere6_auv").parts.get(0).material.set(TextureAttribute.createDiffuse(LoadAssets.textura_Planets.get(planet.getName_planet())));
+            modelInstance.getNode("sphere6_sphere6_auv").parts.get(0).material= new Material(TextureAttribute.createDiffuse(LoadAssets.textura_Planets.get(planet.getName_planet())));
+
+            if (planet.getName_planet()== Planet.PLANET_NAMES.SOL){
+                instanceSun = modelInstance;
+            }
+            else {
+//                ModelInstance temp =new ModelInstance(modelInstance);
+                instances.add(modelInstance);
+            }
+            planetsInstances.add(modelInstance);
+
+//            Material material = new Material(TextureAttribute.createDiffuse(LoadAssets.textura_Planets.get(planet.getName_planet())));
             //modelInstance.transform.setToTranslationAndScaling(planet.getPosition().x,planet.getPosition().y,planet.getPosition().z,planet.getScale().x,planet.getScale().y,planet.getScale().z);
-            modelInstance.getNode("sphere6_sphere6_auv").parts.get(0).material=new Material(TextureAttribute.createDiffuse(LoadAssets.textura_Planets.get(planet.getName_planet())));
-            ModelInstance temp =new ModelInstance(modelInstance);
-            instances.add(temp);
-            planetsInstances.add(temp);
+
+//            modelInstance.getNode("sphere6_sphere6_auv").parts.get(0).material.set(material);
+
         }
 
+        pointLight = new PointLight();
+        pointLight.set(Color.YELLOW,0,0,0,999999999);
 
-
+        environment.add(pointLight);
 
     }
 
@@ -86,15 +105,16 @@ public class GameRenderer {
 
         camController.update();
 
-       world3d.getPlanets().get(3).getMatrix4().getTranslation(temp);
+       world3d.getPlanets().get(5).getMatrix4().getTranslation(temp);
         //camara3D.lookAt(temp);
 
-        camara3D.position.set(temp.add(2200,0,0));
+        camara3D.position.set(temp.sub(4200,0,0));
         camara3D.update();
 
         modelBatch.begin(camara3D);
         updatePlanets(delta);
 
+        modelBatch.render(instanceSun);
         modelBatch.render(instances,environment);
 
         modelBatch.end();
@@ -123,7 +143,6 @@ public class GameRenderer {
     public void dispose() {
         modelBatch.dispose();
         instances.clear();
-
 
     }
 
