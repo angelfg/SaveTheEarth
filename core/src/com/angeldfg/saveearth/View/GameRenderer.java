@@ -88,7 +88,7 @@ public class GameRenderer {
         environment.add(pointLight);
 
     }
-   
+
     private void updatePlanets(float delta){
         for (int cont = 0; cont < world3d.getPlanets().size ; cont++){
             world3d.getPlanets().get(cont).update(delta);
