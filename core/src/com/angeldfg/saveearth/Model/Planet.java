@@ -86,7 +86,7 @@ public class Planet {
 
 
 
-        //matrix.idt();
+        matrix.idt();
         matrix.setToRotation(rotation, angle_tran);
         matrix.translate(position);
         matrix.scale(scale.x,scale.y,scale.z);
