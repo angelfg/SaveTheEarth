@@ -10,12 +10,12 @@ import com.badlogic.gdx.math.Vector3;
 public class SpaceShip {
     public static enum Keys {TURN_LEFT, TURN_RIGHT, UP, DOWN, ACCELERATE, BRAKE, STOP,IDLE};
     /**
-     * Indica se a nave está rotando ou parada. Usado polo campo de estrelas de fondo
+     * State of spaceship
      */
     private Keys state;
 
     /**
-     * Posición da nave
+     * Spaceship position
      */
     private Vector3 position;
 
@@ -32,11 +32,11 @@ public class SpaceShip {
     /**
      * Max velocity
      */
-    private final float MAX_VELOCIDADE=500f;
+    public final static float MAX_VELOCITY =1800f;
     /**
      * Rotation velocity
      */
-    private final float ROTATION_VELOCITY =25f;
+    private final static float ROTATION_VELOCITY =25f;
 
     /**
      * Spaceship direction
@@ -46,7 +46,7 @@ public class SpaceShip {
     /**
      * Max velocity up
      */
-    private final float UP_VELOCITY =1f;
+    private final float UP_VELOCITY =5f;
 
     /**
      * Vector temp
@@ -94,10 +94,10 @@ public class SpaceShip {
 
 
     /**
-     * Inc. velocity until MAX_VELOCIDADE
+     * Inc. velocity until MAX_VELOCITY
      */
     public void incVelocity(){
-        if (velocity <MAX_VELOCIDADE) velocity +=20;
+        if (velocity < MAX_VELOCITY) velocity +=20;
         state = Keys.ACCELERATE;
     }
     /**
@@ -158,7 +158,14 @@ public class SpaceShip {
         matrix.idt();
         matrix.translate(position);
         matrix.rotate(0,1,0,angle_rot.y);
+        if (getState()==Keys.TURN_LEFT){
+            matrix.rotate(0,0,1,-10);
+        }
+        if (getState()==Keys.TURN_RIGHT){
+            matrix.rotate(0,0,1,10);
+        }
         matrix.scale(0.1f,0.1f,0.1f);
+
 
     }
 

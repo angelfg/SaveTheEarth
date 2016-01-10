@@ -2,7 +2,9 @@ package com.angeldfg.saveearth.Controller;
 
 import com.angeldfg.saveearth.Model.Planet;
 import com.angeldfg.saveearth.Model.SpaceShip;
+import com.angeldfg.saveearth.Model.Ufo;
 import com.angeldfg.saveearth.Model.World3D;
+import com.badlogic.gdx.math.Vector3;
 
 
 import java.util.HashMap;
@@ -58,8 +60,21 @@ public class GameController {
      * Update spaceship position
      * @param delta
      */
-    public void updateSpaceShip(float delta){
+    private void updateSpaceShip(float delta){
+
         spaceShip.update(delta);
+    }
+
+    private void updateUfos(float delta){
+
+        Vector3 tmp = new Vector3();
+        for (Ufo ufo : world3D.getUfos()){
+            tmp.set(world3D.getPlanets().get(3).getPosition());
+            tmp.rotate(world3D.getPlanets().get(3).getAngle_tran(),0,1,0);
+            ufo.updateDirection(tmp);
+            ufo.update(delta);
+        }
+
     }
 
 
@@ -67,6 +82,7 @@ public class GameController {
 
         updatePlanets(delta);
         updateSpaceShip(delta);
+        updateUfos(delta);
         processInput();
     }
 

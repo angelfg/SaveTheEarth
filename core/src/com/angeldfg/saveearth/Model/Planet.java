@@ -47,7 +47,7 @@ public class Planet {
         temp = new Vector3();
         rotation = new Vector3(0,1,0);
 
-        angle_tran = MathUtils.random(360);
+        angle_tran = MathUtils.random(10,300);
         matrix = new Matrix4();
 
 
@@ -73,9 +73,7 @@ public class Planet {
     public PLANET_NAMES getName_planet() {
         return name_planet;
     }
-    public Matrix4 getMatrix4(){
-        return matrix;
-    }
+
 
     public void update (float delta){
         angle_tran += trans_velocity*delta;
@@ -94,4 +92,10 @@ public class Planet {
 
 
     }
+
+    public Matrix4 getMatrix4(){
+
+        return matrix;
+    }
+
 }

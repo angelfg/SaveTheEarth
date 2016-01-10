@@ -33,10 +33,6 @@ public class LoadAssets {
         texture_planets.put(Planet.PLANET_NAMES.NEPTUNO, new Texture("planets/neptune.jpg"));
         texture_planets.put(Planet.PLANET_NAMES.PLUTON, new Texture("planets/pluton.jpg"));
 
-        assets.load("planets/baseplanet.g3db", Model.class);
-        assets.load("spaceship/spaceship.g3db", Model.class);
-
-
         //Load controls
         textures_controls.put(Controls.CONTROLS.ACCELERATE,new Texture("control/accelerate.png"));
         textures_controls.put(Controls.CONTROLS.BRAKE,new Texture("control/brake.png"));
@@ -44,6 +40,13 @@ public class LoadAssets {
         textures_controls.put(Controls.CONTROLS.LEFT,new Texture("control/left.png"));
         textures_controls.put(Controls.CONTROLS.RIGHT,new Texture("control/right.png"));
         textures_controls.put(Controls.CONTROLS.UP,new Texture("control/up.png"));
+
+        assets.load("planets/baseplanet.g3db", Model.class);
+        assets.load("spaceship/spaceship.g3db", Model.class);
+        assets.load("ufo/ufo.g3db", Model.class);
+
+
+
 
 
         assets.finishLoading();

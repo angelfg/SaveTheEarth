@@ -5,6 +5,7 @@ import com.angeldfg.saveearth.Assets.Controls;
 import com.angeldfg.saveearth.Assets.LoadAssets;
 import com.angeldfg.saveearth.Model.Planet;
 import com.angeldfg.saveearth.Model.SpaceShip;
+import com.angeldfg.saveearth.Model.Ufo;
 import com.angeldfg.saveearth.Model.World3D;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Color;
@@ -20,6 +21,7 @@ import com.badlogic.gdx.graphics.g3d.ModelInstance;
 import com.badlogic.gdx.graphics.g3d.attributes.ColorAttribute;
 import com.badlogic.gdx.graphics.g3d.attributes.TextureAttribute;
 import com.badlogic.gdx.graphics.g3d.environment.PointLight;
+import com.badlogic.gdx.graphics.g3d.utils.AnimationController;
 import com.badlogic.gdx.graphics.g3d.utils.CameraInputController;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.badlogic.gdx.math.Rectangle;
@@ -39,6 +41,7 @@ public class GameRenderer {
     private ModelInstance instanceSun;  // Envrironment not affect => render
     private ModelInstance instanceSpaceShip;
     private Array<ModelInstance> planetsInstances;
+    private Array<ModelInstance> instancesUfos;
 
     private ModelBatch modelBatch;
     private Environment environment;
@@ -68,6 +71,9 @@ public class GameRenderer {
     private ShapeRenderer shapeRenderer;
 
 
+    PointLight pointLightSun;
+
+    private AnimationController controller;
 
     public GameRenderer(World3D world3d){
 
@@ -78,6 +84,7 @@ public class GameRenderer {
 
         instances = new Array<ModelInstance>();
         planetsInstances = new Array<ModelInstance>();
+        instancesUfos =  new Array<ModelInstance>();
 
         modelBatch = new ModelBatch();
         environment = new Environment();
@@ -87,10 +94,24 @@ public class GameRenderer {
         this.world3d = world3d;
         spaceShip = world3d.getSpaceShip();
 
+      //  pointLight = new PointLight().set(0f, 1f, 0f, 2000000f, 0f, 0f, 10f);
+      //  pointLight.position.set(spaceShip.getPosition());
+      //  environment.add(pointLight);
+
+
         temp = new Vector3();
         shapeRenderer = new ShapeRenderer();
 
 
+        //Load instancesUfos
+        Model modelUfo = LoadAssets.assets.get("ufo/ufo.g3db",Model.class);
+
+        for (Ufo ufo : world3d.getUfos()){
+
+            ModelInstance modelInstance = new ModelInstance(modelUfo);
+            instancesUfos.add(modelInstance);
+            instances.add(modelInstance);
+        }
 
         // Load planets
         Model modelPlanet = LoadAssets.assets.get("planets/baseplanet.g3db",Model.class);
@@ -115,10 +136,10 @@ public class GameRenderer {
         instances.add(instanceSpaceShip);
 
 
-        pointLight = new PointLight();
-        pointLight.set(Color.YELLOW,0,0,0,999999999);
+        pointLightSun = new PointLight();
+        pointLightSun.set(Color.YELLOW,0,0,0,999999999);
 
-        environment.add(pointLight);
+        environment.add(pointLightSun);
 
     }
 
@@ -129,10 +150,25 @@ public class GameRenderer {
 
     }
 
+    private void updateUfos(float delta){
+        for (int cont = 0; cont < world3d.getUfos().size ; cont++){
+            instancesUfos.get(cont).transform.set(world3d.getUfos().get(cont).getMatrix4());
+        }
+
+
+    }
 
     private void updateSpaceShip(float delta){
         instanceSpaceShip.transform.set(spaceShip.getMatrix());
+
+      //  pointLight.position.set(spaceShip.getPosition().cpy().sub(spaceShip.getDirection()).sub(0,0,2));
+
+
+
+
     }
+
+
 
 
     public void render(float delta){
@@ -143,7 +179,7 @@ public class GameRenderer {
 
         updatePlanets(delta);
         updateSpaceShip(delta);
-
+        updateUfos(delta);
 
         temp.set(spaceShip.getPosition());
         camera3D.position.set(temp.sub(spaceShip.getDirection().cpy().scl(10)));
@@ -151,7 +187,6 @@ public class GameRenderer {
 
         temp.set(spaceShip.getPosition());
         camera3D.direction.set(temp.sub(camera3D.position));
-
 
 
 

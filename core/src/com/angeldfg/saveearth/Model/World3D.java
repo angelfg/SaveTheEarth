@@ -1,6 +1,5 @@
 package com.angeldfg.saveearth.Model;
 
-import com.badlogic.gdx.graphics.g2d.ParticleEmitter;
 import com.badlogic.gdx.utils.Array;
 
 /**
@@ -13,8 +12,11 @@ public class World3D {
 
     public final static int PIXEL_PER_2UNIT3D=100;
     public final static float SCALE_SUN=75f;    // 1 unit3d = 4000km
+    public final static float SOLARSYSTEM_SIZE = SCALE_SUN*PIXEL_PER_2UNIT3D+9000*PIXEL_PER_2UNIT3D+500;    // PLUTON POSITION
 
     private Array<Planet> planets = new Array<Planet>();
+
+    private Array<Ufo> ufos = new Array<Ufo>();
 
     private SpaceShip spaceShip;
 
@@ -22,11 +24,21 @@ public class World3D {
 
         initPlanet();
         initSpaceShips();
+        initUfos();
 
     }
 
     private void initSpaceShips(){
         spaceShip = new SpaceShip();
+
+    }
+
+    private void initUfos(){
+
+        for (int cont = 0; cont < Ufo.NUM_UFOS; cont++){
+            ufos.add( new Ufo(planets.get(3).getPosition()));
+        }
+        ufos.add(new Ufo(spaceShip,planets.get(3).getPosition()));
 
     }
     /**
@@ -46,12 +58,21 @@ public class World3D {
     }
     /**
      * return planets and sun
-     * @return the planetas
+     * @return  planetas
      */
     public Array<Planet> getPlanets() {
 
         return planets;
     }
+
+    /**
+     * return array ufos
+     * @return ufos
+     */
+    public Array<Ufo> getUfos() {
+        return ufos;
+    }
+
 
     public SpaceShip getSpaceShip() {
         return spaceShip;
