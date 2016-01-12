@@ -12,6 +12,7 @@ import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.PerspectiveCamera;
+import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.g3d.Environment;
 import com.badlogic.gdx.graphics.g3d.Material;
@@ -33,8 +34,7 @@ import com.badlogic.gdx.utils.Array;
  */
 public class GameRenderer {
 
-    private PerspectiveCamera camera3D;
-
+    private static PerspectiveCamera camera3D;
     private static OrthographicCamera camera2D;
 
     private Array<ModelInstance> instances;
@@ -46,23 +46,22 @@ public class GameRenderer {
     private ModelBatch modelBatch;
     private Environment environment;
 
-    private CameraInputController camController;
-
     private World3D world3d;
     private SpaceShip spaceShip;
     private Vector3 temp;
 
-    private PointLight pointLight;
 
 
 
     private final float CAMARE3D_NEAR = 0.1f;
-    private final float CAMARE3D_FAR = 500000;
+    private final float CAMARE3D_FAR = 50000;
     private final float CAMARE3D_ANGLE = 67f;
 
 
     // 2D
     private SpriteBatch sprite;
+
+    private StringBuffer stringBuffer;
 
     private float CAMARE2D_ANCHO;
     private float CAMARE2D_ALTO;
@@ -71,9 +70,11 @@ public class GameRenderer {
     private ShapeRenderer shapeRenderer;
 
 
-    PointLight pointLightSun;
+    private PointLight pointLightSpaceShip;
+    private PointLight pointLightSun;
+    private Array<PointLight> pointLightUfos;
 
-    private AnimationController controller;
+    private BitmapFont bitMapFont;
 
     public GameRenderer(World3D world3d){
 
@@ -81,6 +82,9 @@ public class GameRenderer {
         camera2D = new OrthographicCamera();
 
         sprite = new SpriteBatch();
+        stringBuffer = new StringBuffer();
+
+        bitMapFont = new BitmapFont(Gdx.files.internal("fonts/font.fnt"), false);
 
         instances = new Array<ModelInstance>();
         planetsInstances = new Array<ModelInstance>();
@@ -94,10 +98,11 @@ public class GameRenderer {
         this.world3d = world3d;
         spaceShip = world3d.getSpaceShip();
 
-      //  pointLight = new PointLight().set(0f, 1f, 0f, 2000000f, 0f, 0f, 10f);
-      //  pointLight.position.set(spaceShip.getPosition());
-      //  environment.add(pointLight);
+      pointLightSpaceShip = new PointLight().set(1f, 0.5f, 0f, 200f, 0f, 0f, 10f);
+      pointLightSpaceShip.position.set(spaceShip.getPosition());
+      environment.add(pointLightSpaceShip);
 
+        pointLightUfos = new Array<PointLight>();
 
         temp = new Vector3();
         shapeRenderer = new ShapeRenderer();
@@ -111,6 +116,11 @@ public class GameRenderer {
             ModelInstance modelInstance = new ModelInstance(modelUfo);
             instancesUfos.add(modelInstance);
             instances.add(modelInstance);
+
+            PointLight p = new PointLight().set(0.5f, 1f, 0f, 2000f, 0f, 0f, 10f);
+            p.setIntensity(5000);
+            pointLightUfos.add(p);
+            environment.add(p);
         }
 
         // Load planets
@@ -137,7 +147,7 @@ public class GameRenderer {
 
 
         pointLightSun = new PointLight();
-        pointLightSun.set(Color.YELLOW,0,0,0,999999999);
+        pointLightSun.set(Color.YELLOW,0,0,0,49999999);
 
         environment.add(pointLightSun);
 
@@ -153,18 +163,40 @@ public class GameRenderer {
     private void updateUfos(float delta){
         for (int cont = 0; cont < world3d.getUfos().size ; cont++){
             instancesUfos.get(cont).transform.set(world3d.getUfos().get(cont).getMatrix4());
+            temp.set(world3d.getUfos().get(cont).getPosition());
+            Vector3 pos = temp.add(0,150,0);
+            pointLightUfos.get(cont).position.set(pos);
         }
 
 
     }
 
+
+    boolean changeColor=false;
     private void updateSpaceShip(float delta){
         instanceSpaceShip.transform.set(spaceShip.getMatrix());
+        pointLightSpaceShip.position.set(spaceShip.getPosition().cpy().sub(spaceShip.getDirection().cpy().scl(2)));
+        float red = pointLightSpaceShip.color.r;
+        if (changeColor) {
+            red += 0.2f * delta;
+            pointLightSun.setIntensity(pointLightSpaceShip.intensity+10*delta);
+        }
+        else
+        {
+            red -= 0.2f * delta;
+            pointLightSun.setIntensity(pointLightSpaceShip.intensity-10*delta);
+        }
 
-      //  pointLight.position.set(spaceShip.getPosition().cpy().sub(spaceShip.getDirection()).sub(0,0,2));
+        if (red>1) {
+            red =1;
+            changeColor=false;
+        }
+        if (red<0.5){
+            red =0.5f;
+            changeColor=true;
+        }
 
-
-
+        pointLightSpaceShip.setColor(red,pointLightSpaceShip.color.g,pointLightSpaceShip.color.b,1);
 
     }
 
@@ -182,17 +214,20 @@ public class GameRenderer {
         updateUfos(delta);
 
         temp.set(spaceShip.getPosition());
-        camera3D.position.set(temp.sub(spaceShip.getDirection().cpy().scl(10)));
-        camera3D.position.add(0,3,0);
+        camera3D.position.set(temp.sub(spaceShip.getDirection().cpy().scl(1)));
+        camera3D.position.add(0,0.3f,0);
 
         temp.set(spaceShip.getPosition());
         camera3D.direction.set(temp.sub(camera3D.position));
 
 
-
+/*        camera3D.position.set(0,15000,1000);
+        camera3D.lookAt(0,0,0);
+*/
        // Gdx.app.log("DATOS",String.valueOf("POSITION:" + spaceShip.getPosition())+"---ANGLE:"+spaceShip.getAngle_rot().y+"-----DIRECTION:"+spaceShip.getDirection()+"----VELOCITY:" + spaceShip.getVelocity());
        // Gdx.app.log("DATOS",String.valueOf("POSITION:" + spaceShip.getPosition())+"---CAMERA:"+camera3D.position);
         camera3D.update();
+
 
 
 
@@ -213,7 +248,18 @@ public class GameRenderer {
         // CONTROLS 2D
         sprite.begin();
         drawControls();
+        drawText();
         sprite.end();
+
+
+
+    }
+
+    private void drawText(){
+
+        stringBuffer.setLength(0);
+        stringBuffer.append("Speed: " + String.valueOf((int)spaceShip.getVelocity()));
+        bitMapFont.draw(sprite, stringBuffer, 100, 20);
 
 
 

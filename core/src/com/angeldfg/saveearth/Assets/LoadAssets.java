@@ -43,6 +43,8 @@ public class LoadAssets {
 
         assets.load("planets/baseplanet.g3db", Model.class);
         assets.load("spaceship/spaceship.g3db", Model.class);
+
+        assets.load("asteriod/asteriod.g3db", Model.class);
         assets.load("ufo/ufo.g3db", Model.class);
 
 

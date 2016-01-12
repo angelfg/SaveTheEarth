@@ -11,8 +11,8 @@ public class World3D {
      */
 
     public final static int PIXEL_PER_2UNIT3D=100;
-    public final static float SCALE_SUN=75f;    // 1 unit3d = 4000km
-    public final static float SOLARSYSTEM_SIZE = SCALE_SUN*PIXEL_PER_2UNIT3D+9000*PIXEL_PER_2UNIT3D+500;    // PLUTON POSITION
+    public final static float SCALE_SUN=10f;    // 1 unit3d = 50000km
+    public final static float SOLARSYSTEM_SIZE = SCALE_SUN*PIXEL_PER_2UNIT3D+900*PIXEL_PER_2UNIT3D;    // PLUTON POSITION
 
     private Array<Planet> planets = new Array<Planet>();
 
@@ -45,16 +45,19 @@ public class World3D {
      * Create planets and sun
      */
     private void initPlanet(){
-        planets.add(new Planet(0,0,0,1f,0f,Planet.PLANET_NAMES.SOL,SCALE_SUN));
-        planets.add(new Planet(SCALE_SUN*PIXEL_PER_2UNIT3D+100*PIXEL_PER_2UNIT3D,0,0,1f,2f,Planet.PLANET_NAMES.MERCURIO,1f));
-        planets.add(new Planet(SCALE_SUN*PIXEL_PER_2UNIT3D+200*PIXEL_PER_2UNIT3D,0,0,0.1f,0.7f,Planet.PLANET_NAMES.VENUS,3f));
-        planets.add(new Planet(SCALE_SUN*PIXEL_PER_2UNIT3D+300*PIXEL_PER_2UNIT3D,0,0,10f,0.5f,Planet.PLANET_NAMES.TIERRA,3f));
-        planets.add(new Planet(SCALE_SUN*PIXEL_PER_2UNIT3D+450*PIXEL_PER_2UNIT3D,0,0,11f,0.3f,Planet.PLANET_NAMES.MARTE,2f));
-        planets.add(new Planet(SCALE_SUN*PIXEL_PER_2UNIT3D+1000*PIXEL_PER_2UNIT3D,0,0,30f,0.2f,Planet.PLANET_NAMES.JUPITER,25f));
-        planets.add(new Planet(SCALE_SUN*PIXEL_PER_2UNIT3D+2000*PIXEL_PER_2UNIT3D,0,0,25f,0.1f,Planet.PLANET_NAMES.SATURNO,20f));
-        planets.add(new Planet(SCALE_SUN*PIXEL_PER_2UNIT3D+4000*PIXEL_PER_2UNIT3D,0,0,22f,0.05f,Planet.PLANET_NAMES.URANO,12f));
-        planets.add(new Planet(SCALE_SUN*PIXEL_PER_2UNIT3D+8000*PIXEL_PER_2UNIT3D,0,0,21f,0.01f,Planet.PLANET_NAMES.NEPTUNO,11f));
-        planets.add(new Planet(SCALE_SUN*PIXEL_PER_2UNIT3D+9000*PIXEL_PER_2UNIT3D,0,0,3f,0.01f,Planet.PLANET_NAMES.PLUTON,0.5f));
+        planets.add(new Planet(0,0,0,0.01f,0f,Planet.PLANET_NAMES.SOL,SCALE_SUN));
+        planets.add(new Planet(SCALE_SUN*PIXEL_PER_2UNIT3D+20*PIXEL_PER_2UNIT3D,0,0,0.02f,4f,Planet.PLANET_NAMES.MERCURIO,SCALE_SUN/90));
+        planets.add(new Planet(SCALE_SUN*PIXEL_PER_2UNIT3D+40*PIXEL_PER_2UNIT3D,0,0,0.2f,3f,Planet.PLANET_NAMES.VENUS,SCALE_SUN/30));
+        planets.add(new Planet(SCALE_SUN*PIXEL_PER_2UNIT3D+60*PIXEL_PER_2UNIT3D,0,0,20f,1.2f,Planet.PLANET_NAMES.TIERRA,SCALE_SUN/30));
+        planets.add(new Planet(SCALE_SUN*PIXEL_PER_2UNIT3D+90*PIXEL_PER_2UNIT3D,0,0,22f,1f,Planet.PLANET_NAMES.MARTE,SCALE_SUN/64));
+        planets.add(new Planet(SCALE_SUN*PIXEL_PER_2UNIT3D+200*PIXEL_PER_2UNIT3D,0,0,50f,0.9f,Planet.PLANET_NAMES.JUPITER,SCALE_SUN/3));
+        planets.add(new Planet(SCALE_SUN*PIXEL_PER_2UNIT3D+300*PIXEL_PER_2UNIT3D,0,0,45f,0.8f,Planet.PLANET_NAMES.SATURNO,SCALE_SUN/5));
+        planets.add(new Planet(SCALE_SUN*PIXEL_PER_2UNIT3D+400*PIXEL_PER_2UNIT3D,0,0,40f,0.4f,Planet.PLANET_NAMES.URANO,SCALE_SUN/9));
+        planets.add(new Planet(SCALE_SUN*PIXEL_PER_2UNIT3D+500*PIXEL_PER_2UNIT3D,0,0,34f,0.2f,Planet.PLANET_NAMES.NEPTUNO,SCALE_SUN/10));
+        planets.add(new Planet(SCALE_SUN*PIXEL_PER_2UNIT3D+600*PIXEL_PER_2UNIT3D,0,0,6f,0.1f,Planet.PLANET_NAMES.PLUTON,SCALE_SUN/150));
+
+
+
     }
     /**
      * return planets and sun

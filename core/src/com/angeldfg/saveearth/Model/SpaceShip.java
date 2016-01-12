@@ -9,6 +9,8 @@ import com.badlogic.gdx.math.Vector3;
  */
 public class SpaceShip {
     public static enum Keys {TURN_LEFT, TURN_RIGHT, UP, DOWN, ACCELERATE, BRAKE, STOP,IDLE};
+
+    private float scale = World3D.SCALE_SUN/900;
     /**
      * State of spaceship
      */
@@ -32,7 +34,7 @@ public class SpaceShip {
     /**
      * Max velocity
      */
-    public final static float MAX_VELOCITY =1800f;
+    public final static float MAX_VELOCITY =300f;
     /**
      * Rotation velocity
      */
@@ -46,7 +48,7 @@ public class SpaceShip {
     /**
      * Max velocity up
      */
-    private final float UP_VELOCITY =5f;
+    private final float UP_VELOCITY =1f;
 
     /**
      * Vector temp
@@ -58,7 +60,7 @@ public class SpaceShip {
 
 
     public SpaceShip(){
-        position = new Vector3(16000,0,0);
+        position = new Vector3(3600,0,0);
         angle_rot = new Vector3(0,0,0);
         velocity =0f;
         state = Keys.STOP;
@@ -97,14 +99,14 @@ public class SpaceShip {
      * Inc. velocity until MAX_VELOCITY
      */
     public void incVelocity(){
-        if (velocity < MAX_VELOCITY) velocity +=20;
+        if (velocity < MAX_VELOCITY) velocity +=15*Gdx.graphics.getDeltaTime();
         state = Keys.ACCELERATE;
     }
     /**
      * Dec  velocity .
      */
     public void decVelocity(){
-        if(velocity >0) velocity -=20;
+        if(velocity >0) velocity -=15*Gdx.graphics.getDeltaTime();
 
         if (velocity < 0) velocity=0;
         state = Keys.BRAKE;
@@ -164,7 +166,7 @@ public class SpaceShip {
         if (getState()==Keys.TURN_RIGHT){
             matrix.rotate(0,0,1,10);
         }
-        matrix.scale(0.1f,0.1f,0.1f);
+        matrix.scale(scale,scale,scale);
 
 
     }

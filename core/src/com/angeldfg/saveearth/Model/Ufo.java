@@ -13,19 +13,19 @@ public class Ufo {
     /**
      * NUMBER OF UFOS
      */
-    public static final int NUM_UFOS = 10;
+    public static final int NUM_UFOS = 20;
 
     /**
      * MIN SIZE
      */
-    private static final int MIN_SIZE=2;
+    private static final float MIN_SIZE=World3D.SCALE_SUN/70;
     /**
      * MAX_SIZE
      */
-    private static final int MAX_SIZE=4;
+    private static final float MAX_SIZE=World3D.SCALE_SUN/60;
 
-    private float MIN_VELOCITY=SpaceShip.MAX_VELOCITY-50;
-    private float MAX_VELOCITY=SpaceShip.MAX_VELOCITY;
+    private float MIN_VELOCITY=SpaceShip.MAX_VELOCITY-150;
+    private float MAX_VELOCITY=SpaceShip.MAX_VELOCITY-100;
 
 
     /**
@@ -74,7 +74,7 @@ public class Ufo {
 
     public Ufo(SpaceShip spaceship,Vector3 earthPosition){
 
-        this.position = spaceship.getPosition().cpy().add(0,0,200);
+        this.position = spaceship.getPosition().cpy().add(0,0,100);
         this.velocity =MathUtils.random(MIN_VELOCITY,MAX_VELOCITY);
         this.scale=MathUtils.random(MIN_SIZE,MAX_SIZE);
         this.direction = (earthPosition.cpy().sub(position)).nor();
