@@ -18,6 +18,11 @@ public class LoadAssets {
     public static HashMap<Planet.PLANET_NAMES,Texture> texture_planets = new
             HashMap<Planet.PLANET_NAMES,Texture>();
 
+    public static Texture texture_radar;
+    public static Texture texture_static_earth;
+    public static Texture texture_static_ufo;
+    public static Texture texture_static_fieldStars;
+
     public static EnumMap<Controls.CONTROLS, Texture> textures_controls = new EnumMap<Controls.CONTROLS, Texture>(Controls.CONTROLS.class);	// Pon o ENUM como key
 
 
@@ -40,6 +45,13 @@ public class LoadAssets {
         textures_controls.put(Controls.CONTROLS.LEFT,new Texture("control/left.png"));
         textures_controls.put(Controls.CONTROLS.RIGHT,new Texture("control/right.png"));
         textures_controls.put(Controls.CONTROLS.UP,new Texture("control/up.png"));
+
+        texture_radar = new Texture("radar/radar.png");
+        texture_static_earth = new Texture("radar/staticearth.png");
+        texture_static_ufo = new Texture("ufo/staticufo.png");
+
+        texture_static_fieldStars = new Texture("fieldstars.jpg");
+        texture_static_fieldStars.setWrap(Texture.TextureWrap.Repeat, Texture.TextureWrap.Repeat);
 
         assets.load("planets/baseplanet.g3db", Model.class);
         assets.load("spaceship/spaceship.g3db", Model.class);

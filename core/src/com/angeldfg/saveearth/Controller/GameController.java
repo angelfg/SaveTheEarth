@@ -4,6 +4,7 @@ import com.angeldfg.saveearth.Model.Planet;
 import com.angeldfg.saveearth.Model.SpaceShip;
 import com.angeldfg.saveearth.Model.Ufo;
 import com.angeldfg.saveearth.Model.World3D;
+import com.angeldfg.saveearth.Screen.GameScreen;
 import com.badlogic.gdx.math.Vector3;
 
 
@@ -75,6 +76,13 @@ public class GameController {
             ufo.update(delta);
         }
 
+        if (world3D.getUfos().size==0){
+            world3D.initUfos();
+            if (world3D.getNumAlienDead()==20){
+                GameScreen.finXogo=true;
+            }
+        }
+
     }
 
 
@@ -93,12 +101,14 @@ public class GameController {
             spaceShip.decVelocity();
         }
 
+        /*  DIFICULT TO PLAY
         if (keys.get(Keys.DOWN)){
             spaceShip.rotate(SpaceShip.Keys.DOWN);
         }
         if (keys.get(Keys.UP)){
             spaceShip.rotate(SpaceShip.Keys.UP);
         }
+        */
         if (keys.get(Keys.TURN_RIGHT)){
             spaceShip.rotate(SpaceShip.Keys.TURN_RIGHT);
         }

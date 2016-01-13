@@ -16,7 +16,6 @@ public class Controls {
 
     public static EnumMap<CONTROLS,Rectangle> size_controls = new EnumMap <CONTROLS,Rectangle>(CONTROLS.class);
 
-
     public static void changeSizeControls(){
 
         OrthographicCamera cam2d= GameRenderer.getCamera2D();

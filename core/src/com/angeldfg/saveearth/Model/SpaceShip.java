@@ -38,7 +38,7 @@ public class SpaceShip {
     /**
      * Rotation velocity
      */
-    private final static float ROTATION_VELOCITY =25f;
+    private final static float ROTATION_VELOCITY =35f;
 
     /**
      * Spaceship direction
@@ -60,7 +60,7 @@ public class SpaceShip {
 
 
     public SpaceShip(){
-        position = new Vector3(3600,0,0);
+        position = new Vector3(World3D.SCALE_SUN*World3D.PIXEL_PER_2UNIT3D+60*World3D.PIXEL_PER_2UNIT3D+500,0,0);
         angle_rot = new Vector3(0,0,0);
         velocity =0f;
         state = Keys.STOP;
@@ -99,14 +99,14 @@ public class SpaceShip {
      * Inc. velocity until MAX_VELOCITY
      */
     public void incVelocity(){
-        if (velocity < MAX_VELOCITY) velocity +=15*Gdx.graphics.getDeltaTime();
+        if (velocity < MAX_VELOCITY) velocity +=25*Gdx.graphics.getDeltaTime();
         state = Keys.ACCELERATE;
     }
     /**
      * Dec  velocity .
      */
     public void decVelocity(){
-        if(velocity >0) velocity -=15*Gdx.graphics.getDeltaTime();
+        if(velocity >0) velocity -=25*Gdx.graphics.getDeltaTime();
 
         if (velocity < 0) velocity=0;
         state = Keys.BRAKE;
@@ -133,16 +133,17 @@ public class SpaceShip {
             angle_rot.y -= ROTATION_VELOCITY *Gdx.graphics.getDeltaTime();
         }
         if (Keys.UP ==key) {
-            position.y+= UP_VELOCITY *Gdx.graphics.getDeltaTime();
+            position.y+= UP_VELOCITY*Gdx.graphics.getDeltaTime();
         }
         if (Keys.DOWN ==key) {
-            position.y-= UP_VELOCITY *Gdx.graphics.getDeltaTime();
+            position.y-= UP_VELOCITY*Gdx.graphics.getDeltaTime();
         }
-
 
         direction.set(0,0,1);
         direction.rotate(angle_rot.y, 0,1,0);
         direction.nor();
+
+
     }
 
     /**

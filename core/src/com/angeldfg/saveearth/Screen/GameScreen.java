@@ -4,10 +4,12 @@ package com.angeldfg.saveearth.Screen;
 import com.angeldfg.saveearth.Assets.Controls;
 import com.angeldfg.saveearth.Assets.LoadAssets;
 import com.angeldfg.saveearth.Controller.GameController;
+import com.angeldfg.saveearth.Model.Radar;
 import com.angeldfg.saveearth.Model.World3D;
 import com.angeldfg.saveearth.SaveEarth;
 import com.angeldfg.saveearth.View.GameRenderer;
 import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.Input;
 import com.badlogic.gdx.InputProcessor;
 import com.badlogic.gdx.Screen;
 import com.badlogic.gdx.math.Circle;
@@ -25,6 +27,8 @@ public class GameScreen implements Screen, InputProcessor {
     private SaveEarth principal;
     private GameController gameController;
 
+    public static boolean finXogo;
+
     public GameScreen(SaveEarth principal){
         LoadAssets.loadGraphics();
 
@@ -33,7 +37,7 @@ public class GameScreen implements Screen, InputProcessor {
         gameRenderer = new GameRenderer(world3d);
         gameController = new GameController(world3d);
 
-
+        finXogo=false;
     }
 
     @Override
@@ -76,11 +80,30 @@ public class GameScreen implements Screen, InputProcessor {
 
     @Override
     public boolean keyDown(int keycode) {
+
+        if (keycode== Input.Keys.RIGHT){
+            gameController.pressKey(GameController.Keys.TURN_RIGHT);
+        }
+        if (keycode== Input.Keys.LEFT){
+            gameController.pressKey(GameController.Keys.TURN_LEFT);
+        }
+        if (keycode== Input.Keys.UP){
+            gameController.pressKey(GameController.Keys.ACCELERATE);
+        }
+        if (keycode== Input.Keys.DOWN){
+            gameController.pressKey(GameController.Keys.BRAKE);
+        }
+
         return false;
     }
 
     @Override
     public boolean keyUp(int keycode) {
+        gameController.releaseKey(GameController.Keys.TURN_RIGHT);
+        gameController.releaseKey(GameController.Keys.TURN_LEFT);
+        gameController.releaseKey(GameController.Keys.ACCELERATE);
+        gameController.releaseKey(GameController.Keys.BRAKE);
+
         return false;
     }
 
@@ -95,6 +118,16 @@ public class GameScreen implements Screen, InputProcessor {
         Vector3 coord = new Vector3(screenX,screenY,0);
         GameRenderer.getCamera2D().unproject(coord);
         Circle press = new Circle(coord.x,coord.y, Controls.SIZE/4);
+
+        if (Intersector.overlaps(press, Radar.size_radar)){
+            if (!Radar.isMinimize())
+               Radar.setMinimize(true);
+        }
+        if (Intersector.overlaps(press, Radar.size_radar_minimized)){
+            if (Radar.isMinimize())
+                Radar.setMinimize(false);
+        }
+
 
         if (Intersector.overlaps(press,Controls.size_controls.get(Controls.CONTROLS.ACCELERATE))){
             gameController.pressKey(GameController.Keys.ACCELERATE);
@@ -126,6 +159,15 @@ public class GameScreen implements Screen, InputProcessor {
     public boolean touchUp(int screenX, int screenY, int pointer, int button) {
         // TODO Auto-generated method stub
 
+        gameController.releaseKey(GameController.Keys.BRAKE);
+        gameController.releaseKey(GameController.Keys.ACCELERATE);
+        gameController.releaseKey(GameController.Keys.STOP);
+        gameController.releaseKey(GameController.Keys.TURN_LEFT);
+        gameController.releaseKey(GameController.Keys.TURN_RIGHT);
+        gameController.releaseKey(GameController.Keys.UP);
+        gameController.releaseKey(GameController.Keys.DOWN);
+
+/*
         Vector3 coord = new Vector3(screenX,screenY,0);
         GameRenderer.getCamera2D().unproject(coord);
         Circle press = new Circle(coord.x,coord.y, Controls.SIZE/4);
@@ -152,6 +194,7 @@ public class GameScreen implements Screen, InputProcessor {
         if (Intersector.overlaps(press,Controls.size_controls.get(Controls.CONTROLS.DOWN))){
             gameController.releaseKey(GameController.Keys.DOWN);
         }
+*/
 
         return false;
     }

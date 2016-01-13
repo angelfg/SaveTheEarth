@@ -13,18 +13,18 @@ public class Ufo {
     /**
      * NUMBER OF UFOS
      */
-    public static final int NUM_UFOS = 20;
+    public static final int NUM_UFOS = 5;
 
     /**
      * MIN SIZE
      */
-    private static final float MIN_SIZE=World3D.SCALE_SUN/70;
+    private static final float MIN_SIZE=World3D.SCALE_SUN/30;
     /**
      * MAX_SIZE
      */
-    private static final float MAX_SIZE=World3D.SCALE_SUN/60;
+    private static final float MAX_SIZE=World3D.SCALE_SUN/50;
 
-    private float MIN_VELOCITY=SpaceShip.MAX_VELOCITY-150;
+    private float MIN_VELOCITY=SpaceShip.MAX_VELOCITY-200;
     private float MAX_VELOCITY=SpaceShip.MAX_VELOCITY-100;
 
 
@@ -59,7 +59,8 @@ public class Ufo {
 
     public Ufo(Vector3 earthPosition){
 
-        this.position = new Vector3(MathUtils.random(World3D.SOLARSYSTEM_SIZE-1000, World3D.SOLARSYSTEM_SIZE+1000),0,MathUtils.random(1000,1000));
+        this.position = new Vector3(MathUtils.random(World3D.SOLARSYSTEM_SIZE+3000,World3D.SOLARSYSTEM_SIZE+500),0,MathUtils.random(World3D.SOLARSYSTEM_SIZE+3000,500));
+        position.rotate(MathUtils.random(1,360),0,1,0);
         this.velocity =MathUtils.random(MIN_VELOCITY,MAX_VELOCITY);
         this.scale=MathUtils.random(MIN_SIZE,MAX_SIZE);
         this.direction = (earthPosition.cpy().sub(position)).nor();
@@ -70,6 +71,7 @@ public class Ufo {
 
         matrix = new Matrix4();
 
+       // Gdx.app.log("DATOS:", "UFO DATA: Position:" + String.valueOf(position)+"- Velocity:" + String.valueOf(velocity)+" -scale:"+ String.valueOf(scale));
     }
 
     public Ufo(SpaceShip spaceship,Vector3 earthPosition){
