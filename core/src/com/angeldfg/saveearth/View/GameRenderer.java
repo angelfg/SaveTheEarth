@@ -3,6 +3,7 @@ package com.angeldfg.saveearth.View;
 
 import com.angeldfg.saveearth.Assets.Controls;
 import com.angeldfg.saveearth.Assets.LoadAssets;
+import com.angeldfg.saveearth.Model.Bullet;
 import com.angeldfg.saveearth.Model.Planet;
 import com.angeldfg.saveearth.Model.Radar;
 import com.angeldfg.saveearth.Model.SpaceShip;
@@ -13,6 +14,8 @@ import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.PerspectiveCamera;
+import com.badlogic.gdx.graphics.Texture;
+import com.badlogic.gdx.graphics.VertexAttributes;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.Sprite;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
@@ -22,8 +25,10 @@ import com.badlogic.gdx.graphics.g3d.Model;
 import com.badlogic.gdx.graphics.g3d.ModelBatch;
 import com.badlogic.gdx.graphics.g3d.ModelInstance;
 import com.badlogic.gdx.graphics.g3d.attributes.ColorAttribute;
+import com.badlogic.gdx.graphics.g3d.attributes.FloatAttribute;
 import com.badlogic.gdx.graphics.g3d.attributes.TextureAttribute;
 import com.badlogic.gdx.graphics.g3d.environment.PointLight;
+import com.badlogic.gdx.graphics.g3d.utils.ModelBuilder;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.math.Vector2;
@@ -46,6 +51,7 @@ public class GameRenderer {
 
     private ModelBatch modelBatch;
     private Environment environment;
+    private Environment environmentBullets;
 
     private World3D world3d;
     private SpaceShip spaceShip;
@@ -55,7 +61,6 @@ public class GameRenderer {
     // To move field of stars
     private Vector2 scrollTimer=new Vector2(0,0);
     private Sprite fieldStars;
-
 
 
     private final float CAMARE3D_NEAR = 0.1f;
@@ -81,6 +86,8 @@ public class GameRenderer {
 
     private BitmapFont bitMapFont;
 
+    private ModelInstance modelInstanceBullet;
+
     public GameRenderer(World3D world3d){
 
         camera3D = new PerspectiveCamera();
@@ -99,7 +106,9 @@ public class GameRenderer {
 
         modelBatch = new ModelBatch();
         environment = new Environment();
+        environmentBullets = new Environment();
         environment.set(new ColorAttribute(ColorAttribute.AmbientLight, 0.4f, 0.4f, 0.4f, 1f));
+        environmentBullets.set(new ColorAttribute(ColorAttribute.AmbientLight, 0.4f, 0.4f, 0.4f, 1f));
         //environment.add(new PointLight().set(1050, 0f, 0f, 2000f, 0f, 0f, 10f));
 
         this.world3d = world3d;
@@ -118,7 +127,6 @@ public class GameRenderer {
 
         //Load instancesUfos
         Model modelUfo = LoadAssets.assets.get("ufo/ufo.g3db",Model.class);
-
         for (Ufo ufo : world3d.getUfos()){
 
             ModelInstance modelInstance = new ModelInstance(modelUfo);
@@ -136,7 +144,6 @@ public class GameRenderer {
         for (Planet planet : world3d.getPlanets()){
 
             ModelInstance modelInstance = new ModelInstance(modelPlanet);
-            //modelInstance.getNode("sphere6_sphere6_auv").parts.get(0).material.set(TextureAttribute.createDiffuse(LoadAssets.texture_planets.get(planet.getName_planet())));
             modelInstance.getNode("sphere6_sphere6_auv").parts.get(0).material= new Material(TextureAttribute.createDiffuse(LoadAssets.texture_planets.get(planet.getName_planet())));
 
             if (planet.getName_planet()== Planet.PLANET_NAMES.SOL){
@@ -148,7 +155,19 @@ public class GameRenderer {
             planetsInstances.add(modelInstance);
 
         }
-        // Load SpaceShip and animation
+
+        // BULLETS
+        ModelBuilder modelBuilder = new ModelBuilder();
+        Texture textura = LoadAssets.texture_planets.get(Planet.PLANET_NAMES.SOL);
+        Material material = new Material(TextureAttribute.createDiffuse(textura), ColorAttribute.createSpecular(0,0, 1, 1),
+                FloatAttribute.createShininess(8f));
+        long attributes = VertexAttributes.Usage.Position | VertexAttributes.Usage.Normal | VertexAttributes.Usage.TextureCoordinates;
+
+        Model sphere = modelBuilder.createSphere(2f, 2f, 2f, 24, 24, material, attributes);
+        modelInstanceBullet = new ModelInstance(sphere);
+
+
+        // Load SpaceShip
         Model modelSpaceShip = LoadAssets.assets.get("spaceship/spaceship.g3db",Model.class);
         instanceSpaceShip = new ModelInstance(modelSpaceShip);
         instances.add(instanceSpaceShip);
@@ -209,6 +228,16 @@ public class GameRenderer {
     }
 
 
+    private void updateBullets(float delta){
+        int cont;
+
+        for (Bullet bullet : spaceShip.getBullets()){
+
+            modelInstanceBullet.transform.set(bullet.getMatrix());
+            modelBatch.render(modelInstanceBullet);
+
+        }
+    }
 
 
     public void render(float delta){
@@ -239,10 +268,13 @@ public class GameRenderer {
 
 
         modelBatch.begin(camera3D);
+            updateBullets(delta);
+    //        modelBatch.render(instancesBullets,environmentBullets);
             modelBatch.render(instanceSun);
             modelBatch.render(instances,environment);
         modelBatch.end();
 
+       // debugger();
 
         // CONTROLS 2D
         sprite.begin();
@@ -389,6 +421,8 @@ public class GameRenderer {
         control = Controls.size_controls.get(Controls.CONTROLS.BRAKE);
         sprite.draw(LoadAssets.textures_controls.get(Controls.CONTROLS.BRAKE),control.x,control.y,control.width,control.height);
 
+        control = Controls.size_controls.get(Controls.CONTROLS.FIRE);
+        sprite.draw(LoadAssets.textures_controls.get(Controls.CONTROLS.FIRE),control.x,control.y,control.width,control.height);
 
 
     }
@@ -430,6 +464,7 @@ public class GameRenderer {
         temp1.set(spaceShip.getPosition());
 
         camera3D.project(temp1,0,0,camera2D.viewportWidth,camera2D.viewportHeight);
+        shapeRenderer.circle(temp1.x,temp1.y,20);
         Vector3 temp2 = new Vector3(spaceShip.getPosition().cpy().add(spaceShip.getDirection().cpy().scl(5)));
         camera3D.project(temp2,0,0,camera2D.viewportWidth,camera2D.viewportHeight);
         shapeRenderer.line(temp1.x, temp1.y,temp2.x,temp2.y);
@@ -441,7 +476,7 @@ public class GameRenderer {
     public void dispose() {
         modelBatch.dispose();
         instances.clear();
-
+        instancesUfos.clear();
 
     }
 

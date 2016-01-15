@@ -45,6 +45,8 @@ public class LoadAssets {
         textures_controls.put(Controls.CONTROLS.LEFT,new Texture("control/left.png"));
         textures_controls.put(Controls.CONTROLS.RIGHT,new Texture("control/right.png"));
         textures_controls.put(Controls.CONTROLS.UP,new Texture("control/up.png"));
+        textures_controls.put(Controls.CONTROLS.FIRE,new Texture("control/fire.png"));
+
 
         texture_radar = new Texture("radar/radar.png");
         texture_static_earth = new Texture("radar/staticearth.png");

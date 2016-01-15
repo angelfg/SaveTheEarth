@@ -48,7 +48,7 @@ public class Ufo {
     private Vector3 rotation;
 
     /**
-     * scale
+     * SCALE
      */
     private float scale;
 
@@ -71,7 +71,7 @@ public class Ufo {
 
         matrix = new Matrix4();
 
-       // Gdx.app.log("DATOS:", "UFO DATA: Position:" + String.valueOf(position)+"- Velocity:" + String.valueOf(velocity)+" -scale:"+ String.valueOf(scale));
+       // Gdx.app.log("DATOS:", "UFO DATA: Position:" + String.valueOf(position)+"- Velocity:" + String.valueOf(velocity)+" -SCALE:"+ String.valueOf(SCALE));
     }
 
     public Ufo(SpaceShip spaceship,Vector3 earthPosition){

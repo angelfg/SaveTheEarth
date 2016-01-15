@@ -1,5 +1,6 @@
 package com.angeldfg.saveearth.Controller;
 
+import com.angeldfg.saveearth.Model.Bullet;
 import com.angeldfg.saveearth.Model.Planet;
 import com.angeldfg.saveearth.Model.SpaceShip;
 import com.angeldfg.saveearth.Model.Ufo;
@@ -16,7 +17,7 @@ import java.util.Map;
  */
 public class GameController {
 
-    public static enum Keys {TURN_LEFT, TURN_RIGHT, UP, DOWN, ACCELERATE, BRAKE, STOP};
+    public static enum Keys {TURN_LEFT, TURN_RIGHT, UP, DOWN, ACCELERATE, BRAKE, FIRE};
 
     static Map<Keys, Boolean> keys = new HashMap<Keys, Boolean>();
     static {
@@ -26,7 +27,7 @@ public class GameController {
         keys.put(Keys.TURN_LEFT, false);
         keys.put(Keys.ACCELERATE, false);
         keys.put(Keys.BRAKE, false);
-        keys.put(Keys.STOP, false);
+        keys.put(Keys.FIRE, false);
     };
 
     private World3D world3D;
@@ -120,8 +121,10 @@ public class GameController {
         if ((!keys.get(Keys.DOWN)) && (!keys.get(Keys.UP)) && (!keys.get(Keys.TURN_RIGHT)) && (!keys.get(Keys.TURN_LEFT)))
             spaceShip.setState(SpaceShip.Keys.IDLE);
 
-        if (keys.get(Keys.STOP)){
-            world3D.getSpaceShip().stop();
+        if (keys.get(Keys.FIRE)){
+            if (world3D.getSpaceShip().getNumBulletsActive() < SpaceShip.MAX_NUM_BULLETS)
+                world3D.getSpaceShip().addBullet(new Bullet(spaceShip.getMatrix().cpy(),spaceShip.getDirection().cpy(),spaceShip.getVelocity()));
+               // world3D.getSpaceShip().addBullet(new Bullet(spaceShip.getPosition().cpy(),spaceShip.getDirection().cpy(),spaceShip.getVelocity(),spaceShip.getAngle_rot().y));
         }
 
     }

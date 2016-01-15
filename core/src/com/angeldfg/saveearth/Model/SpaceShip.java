@@ -3,6 +3,7 @@ package com.angeldfg.saveearth.Model;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.math.Matrix4;
 import com.badlogic.gdx.math.Vector3;
+import com.badlogic.gdx.utils.Array;
 
 /**
  * Created by angel on 07/01/2016.
@@ -10,7 +11,9 @@ import com.badlogic.gdx.math.Vector3;
 public class SpaceShip {
     public static enum Keys {TURN_LEFT, TURN_RIGHT, UP, DOWN, ACCELERATE, BRAKE, STOP,IDLE};
 
-    private float scale = World3D.SCALE_SUN/900;
+    public final static int MAX_NUM_BULLETS=5;
+
+    public static final float SCALE = World3D.SCALE_SUN/900;
     /**
      * State of spaceship
      */
@@ -55,6 +58,13 @@ public class SpaceShip {
      */
     private Vector3 vectortemp;
 
+    /**
+     * Bullets
+     */
+    private Array<Bullet> bullets;
+
+    private int numBulletsActive=0;
+    private float chronoNextFire=1; // wait 1 second to the next fire
 
     private Matrix4 matrix;
 
@@ -67,6 +77,9 @@ public class SpaceShip {
         direction = new Vector3(0,0,1);
         vectortemp = new Vector3();
         matrix = new Matrix4();
+
+        bullets = new Array<Bullet>();
+
     }
 
 
@@ -146,16 +159,33 @@ public class SpaceShip {
 
     }
 
+    public void addBullet(Bullet bullet) {
+        if (chronoNextFire > 0 && chronoNextFire < 1)
+            return;
+        chronoNextFire=1;
+        bullets.add(bullet);
+        numBulletsActive++;
+    }
+
     /**
      * Update position spaceship
      * @param delta
      */
     public void update(float delta){
-
-
         vectortemp.set(direction);
         position.add(vectortemp.scl(velocity *delta));
 
+        chronoNextFire-=delta;
+
+        // Update fires
+        for (Bullet bullet : bullets){
+            // wait 1 second to next fire
+            bullet.update(delta);
+            if (bullet.getChrono()<=0) {
+                bullets.removeValue(bullet,true);
+                numBulletsActive--;
+            }
+        }
 
 
         matrix.idt();
@@ -167,10 +197,22 @@ public class SpaceShip {
         if (getState()==Keys.TURN_RIGHT){
             matrix.rotate(0,0,1,10);
         }
-        matrix.scale(scale,scale,scale);
+        matrix.scale(SCALE, SCALE, SCALE);
 
 
     }
+
+    public Array<Bullet> getBullets() {
+        return bullets;
+    }
+    public int getNumBulletsActive() {
+        return numBulletsActive;
+    }
+
+    public void setNumBulletsActive(int numBulletsActive) {
+        this.numBulletsActive = numBulletsActive;
+    }
+
 
     public Matrix4 getMatrix() {
         return matrix;

@@ -93,16 +93,31 @@ public class GameScreen implements Screen, InputProcessor {
         if (keycode== Input.Keys.DOWN){
             gameController.pressKey(GameController.Keys.BRAKE);
         }
+        if (keycode== Input.Keys.SPACE){
+            gameController.pressKey(GameController.Keys.FIRE);
+        }
 
         return false;
     }
 
     @Override
     public boolean keyUp(int keycode) {
-        gameController.releaseKey(GameController.Keys.TURN_RIGHT);
-        gameController.releaseKey(GameController.Keys.TURN_LEFT);
-        gameController.releaseKey(GameController.Keys.ACCELERATE);
-        gameController.releaseKey(GameController.Keys.BRAKE);
+        if (keycode== Input.Keys.RIGHT){
+            gameController.releaseKey(GameController.Keys.TURN_RIGHT);
+        }
+        if (keycode== Input.Keys.LEFT){
+            gameController.releaseKey(GameController.Keys.TURN_LEFT);
+        }
+        if (keycode== Input.Keys.UP){
+            gameController.releaseKey(GameController.Keys.ACCELERATE);
+        }
+        if (keycode== Input.Keys.DOWN){
+            gameController.releaseKey(GameController.Keys.BRAKE);
+        }
+        if (keycode== Input.Keys.SPACE){
+            gameController.releaseKey(GameController.Keys.FIRE);
+        }
+
 
         return false;
     }
@@ -135,8 +150,8 @@ public class GameScreen implements Screen, InputProcessor {
         if (Intersector.overlaps(press,Controls.size_controls.get(Controls.CONTROLS.BRAKE))){
             gameController.pressKey(GameController.Keys.BRAKE);
         }
-        if (Intersector.overlaps(press,Controls.size_controls.get(Controls.CONTROLS.STOP))){
-            gameController.pressKey(GameController.Keys.STOP);
+        if (Intersector.overlaps(press,Controls.size_controls.get(Controls.CONTROLS.FIRE))){
+            gameController.pressKey(GameController.Keys.FIRE);
         }
 
         if (Intersector.overlaps(press,Controls.size_controls.get(Controls.CONTROLS.LEFT))){
@@ -158,45 +173,52 @@ public class GameScreen implements Screen, InputProcessor {
     @Override
     public boolean touchUp(int screenX, int screenY, int pointer, int button) {
         // TODO Auto-generated method stub
-
-        gameController.releaseKey(GameController.Keys.BRAKE);
-        gameController.releaseKey(GameController.Keys.ACCELERATE);
-        gameController.releaseKey(GameController.Keys.STOP);
-        gameController.releaseKey(GameController.Keys.TURN_LEFT);
-        gameController.releaseKey(GameController.Keys.TURN_RIGHT);
-        gameController.releaseKey(GameController.Keys.UP);
-        gameController.releaseKey(GameController.Keys.DOWN);
-
-/*
         Vector3 coord = new Vector3(screenX,screenY,0);
         GameRenderer.getCamera2D().unproject(coord);
         Circle press = new Circle(coord.x,coord.y, Controls.SIZE/4);
+        boolean enter=false;
 
         if (Intersector.overlaps(press,Controls.size_controls.get(Controls.CONTROLS.ACCELERATE))){
             gameController.releaseKey(GameController.Keys.ACCELERATE);
+            enter=true;
         }
         if (Intersector.overlaps(press,Controls.size_controls.get(Controls.CONTROLS.BRAKE))){
             gameController.releaseKey(GameController.Keys.BRAKE);
+            enter=true;
         }
-        if (Intersector.overlaps(press,Controls.size_controls.get(Controls.CONTROLS.STOP))){
-            gameController.releaseKey(GameController.Keys.STOP);
+        if (Intersector.overlaps(press,Controls.size_controls.get(Controls.CONTROLS.FIRE))){
+            gameController.releaseKey(GameController.Keys.FIRE);
+            enter=true;
         }
-
         if (Intersector.overlaps(press,Controls.size_controls.get(Controls.CONTROLS.LEFT))){
             gameController.releaseKey(GameController.Keys.TURN_LEFT);
+            enter=true;
         }
         if (Intersector.overlaps(press,Controls.size_controls.get(Controls.CONTROLS.RIGHT))){
             gameController.releaseKey(GameController.Keys.TURN_RIGHT);
+            enter=true;
         }
         if (Intersector.overlaps(press,Controls.size_controls.get(Controls.CONTROLS.UP))){
             gameController.releaseKey(GameController.Keys.UP);
+            enter=true;
         }
         if (Intersector.overlaps(press,Controls.size_controls.get(Controls.CONTROLS.DOWN))){
             gameController.releaseKey(GameController.Keys.DOWN);
+            enter=true;
         }
-*/
 
+        if (!enter){
+            gameController.releaseKey(GameController.Keys.ACCELERATE);
+            gameController.releaseKey(GameController.Keys.BRAKE);
+            gameController.releaseKey(GameController.Keys.FIRE);
+            gameController.releaseKey(GameController.Keys.TURN_LEFT);
+            gameController.releaseKey(GameController.Keys.TURN_RIGHT);
+            gameController.releaseKey(GameController.Keys.UP);
+            gameController.releaseKey(GameController.Keys.DOWN);
+        }
         return false;
+
+
     }
 
     @Override
