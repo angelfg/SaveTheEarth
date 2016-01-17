@@ -2,8 +2,12 @@ package com.angeldfg.saveearth.Assets;
 
 import com.angeldfg.saveearth.Model.Planet;
 import com.badlogic.gdx.assets.AssetManager;
+import com.badlogic.gdx.assets.loaders.resolvers.InternalFileHandleResolver;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g3d.Model;
+import com.badlogic.gdx.graphics.g3d.particles.ParticleEffect;
+import com.badlogic.gdx.graphics.g3d.particles.ParticleEffectLoader;
+import com.badlogic.gdx.graphics.g3d.particles.ParticleSystem;
 
 import java.util.EnumMap;
 import java.util.HashMap;
@@ -61,11 +65,20 @@ public class LoadAssets {
 
 
 
-
-
         assets.finishLoading();
 
     }
+
+    public static void loadParticleEffects3D(ParticleSystem ps){
+
+        ParticleEffectLoader.ParticleEffectLoadParameter loadParam = new ParticleEffectLoader.ParticleEffectLoadParameter(ps.getBatches());
+        ParticleEffectLoader loader = new ParticleEffectLoader(new InternalFileHandleResolver());
+        assets.setLoader(ParticleEffect.class, loader);
+        assets.load("particle3d/explosion.pfx", ParticleEffect.class, loadParam);
+        assets.finishLoading();
+
+    }
+
     public static void disposeGraphics(){
 
         assets.clear();

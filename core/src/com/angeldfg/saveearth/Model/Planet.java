@@ -4,6 +4,7 @@ import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.math.MathUtils;
 import com.badlogic.gdx.math.Matrix4;
 import com.badlogic.gdx.math.Vector3;
+import com.badlogic.gdx.math.collision.Sphere;
 
 import java.util.Random;
 
@@ -11,6 +12,8 @@ import java.util.Random;
  * Created by angel on 03/01/2016.
  */
 public class Planet {
+
+    public static final float SCALE_FROM_BLENDER=100;
 
     public static enum PLANET_NAMES
     {SOL,MERCURIO,VENUS,TIERRA,MARTE,JUPITER,SATURNO,URANO,NEPTUNO,PLUTON};
@@ -25,6 +28,11 @@ public class Planet {
 
     private Vector3 temp;
 
+    /**
+     * Detect impact
+     */
+    private Sphere sphere;
+
 
     /**
      *
@@ -34,21 +42,24 @@ public class Planet {
      * @param velocidaderotacion: Rotation velocity
      * @param velocidadetraslacion: Translate velocity
      * @param nomeplaneta: Planet Name
-     * @param escala: Scale
+     * @param scale: Scale
      */
     public Planet(float x, float y, float z,float velocidaderotacion,float velocidadetraslacion,
-                  PLANET_NAMES nomeplaneta, float escala){
+                  PLANET_NAMES nomeplaneta, float scale){
+
         position = new Vector3(x,y,z);
         this.trans_velocity =velocidadetraslacion;
         this.rot_velocity =velocidaderotacion;
-        this.scale.set(escala,escala,escala);
+        this.scale.set(scale,scale,scale);
         this.name_planet=nomeplaneta;
+
 
         temp = new Vector3();
         rotation = new Vector3(0,1,0);
 
         angle_tran = MathUtils.random(10,300);
         matrix = new Matrix4();
+        sphere = new Sphere(new Vector3(position.x,position.y,position.z), SCALE_FROM_BLENDER*scale);
 
 
     }
@@ -82,11 +93,14 @@ public class Planet {
         if (angle_tran>360) angle_tran=0;
         if (angle_rot>360) angle_rot=0;
 
-
-
         matrix.idt();
         matrix.setToRotation(rotation, angle_tran);
         matrix.translate(position);
+
+
+        // Localtion sphere center
+        matrix.getTranslation(sphere.center);
+
         matrix.scale(scale.x,scale.y,scale.z);
         matrix.rotate(rotation, angle_rot);
 
@@ -97,5 +111,7 @@ public class Planet {
 
         return matrix;
     }
-
+    public Sphere getSphere() {
+        return sphere;
+    }
 }

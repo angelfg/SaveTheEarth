@@ -27,7 +27,8 @@ public class GameScreen implements Screen, InputProcessor {
     private SaveEarth principal;
     private GameController gameController;
 
-    public static boolean finXogo;
+    public static boolean endGame;
+    public static boolean winGame;
 
     public GameScreen(SaveEarth principal){
         LoadAssets.loadGraphics();
@@ -37,7 +38,8 @@ public class GameScreen implements Screen, InputProcessor {
         gameRenderer = new GameRenderer(world3d);
         gameController = new GameController(world3d);
 
-        finXogo=false;
+        endGame =false;
+        winGame=false;
     }
 
     @Override

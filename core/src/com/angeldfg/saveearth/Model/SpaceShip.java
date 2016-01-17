@@ -3,6 +3,7 @@ package com.angeldfg.saveearth.Model;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.math.Matrix4;
 import com.badlogic.gdx.math.Vector3;
+import com.badlogic.gdx.math.collision.Sphere;
 import com.badlogic.gdx.utils.Array;
 
 /**
@@ -14,6 +15,8 @@ public class SpaceShip {
     public final static int MAX_NUM_BULLETS=5;
 
     public static final float SCALE = World3D.SCALE_SUN/900;
+    public static final float SCALE_FROM_BLENDER = 4.707f;
+
     /**
      * State of spaceship
      */
@@ -63,6 +66,11 @@ public class SpaceShip {
      */
     private Array<Bullet> bullets;
 
+    /**
+     * Detect impact
+     */
+    private Sphere sphere;
+
     private int numBulletsActive=0;
     private float chronoNextFire=1; // wait 1 second to the next fire
 
@@ -70,7 +78,8 @@ public class SpaceShip {
 
 
     public SpaceShip(){
-        position = new Vector3(World3D.SCALE_SUN*World3D.PIXEL_PER_2UNIT3D+60*World3D.PIXEL_PER_2UNIT3D+500,0,0);
+        //position = new Vector3(World3D.SCALE_SUN*World3D.PIXEL_PER_2UNIT3D+60*World3D.PIXEL_PER_2UNIT3D+500,0,0);
+        position = new Vector3(4000,0,1000);
         angle_rot = new Vector3(0,0,0);
         velocity =0f;
         state = Keys.STOP;
@@ -78,7 +87,10 @@ public class SpaceShip {
         vectortemp = new Vector3();
         matrix = new Matrix4();
 
+
         bullets = new Array<Bullet>();
+
+        sphere = new Sphere(new Vector3(0,0,0),SCALE*SCALE_FROM_BLENDER/2);
 
     }
 
@@ -190,6 +202,8 @@ public class SpaceShip {
 
         matrix.idt();
         matrix.translate(position);
+        sphere.center.set(position);
+
         matrix.rotate(0,1,0,angle_rot.y);
         if (getState()==Keys.TURN_LEFT){
             matrix.rotate(0,0,1,-10);
@@ -213,6 +227,9 @@ public class SpaceShip {
         this.numBulletsActive = numBulletsActive;
     }
 
+    public Sphere getSphere() {
+        return sphere;
+    }
 
     public Matrix4 getMatrix() {
         return matrix;

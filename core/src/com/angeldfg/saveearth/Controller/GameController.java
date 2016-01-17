@@ -6,7 +6,10 @@ import com.angeldfg.saveearth.Model.SpaceShip;
 import com.angeldfg.saveearth.Model.Ufo;
 import com.angeldfg.saveearth.Model.World3D;
 import com.angeldfg.saveearth.Screen.GameScreen;
+import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.math.Vector3;
+import com.badlogic.gdx.math.collision.Sphere;
+import com.badlogic.gdx.utils.Array;
 
 
 import java.util.HashMap;
@@ -18,6 +21,11 @@ import java.util.Map;
 public class GameController {
 
     public static enum Keys {TURN_LEFT, TURN_RIGHT, UP, DOWN, ACCELERATE, BRAKE, FIRE};
+
+    /**
+     * Use to stop ufo when it´s going to crash with a planet
+     */
+    private Sphere sphere;
 
     static Map<Keys, Boolean> keys = new HashMap<Keys, Boolean>();
     static {
@@ -36,6 +44,8 @@ public class GameController {
     public GameController(World3D world3D){
         this.world3D = world3D;
         spaceShip = world3D.getSpaceShip();
+
+        sphere = new Sphere(new Vector3(0,0,0),spaceShip.getSphere().radius);
     }
 
 
@@ -47,6 +57,9 @@ public class GameController {
         keys.put(key, false);
     }
 
+
+
+
     /**
      * Update planets
      * @param delta
@@ -54,7 +67,6 @@ public class GameController {
     public void updatePlanets(float delta){
         for(Planet planet : world3D.getPlanets()){
             planet.update(delta);
-
         }
     }
 
@@ -77,22 +89,121 @@ public class GameController {
             ufo.update(delta);
         }
 
-        if (world3D.getUfos().size==0){
-            world3D.initUfos();
-            if (world3D.getNumAlienDead()==20){
-                GameScreen.finXogo=true;
+    }
+
+
+    private void controlBullets(){
+
+        for (Bullet bullet : spaceShip.getBullets()){
+
+            for (Ufo ufo : world3D.getUfos()){
+                if (bullet.getSphere().overlaps(ufo.getSphere())){      // IMPACT UFO - BULLET
+                    Gdx.app.log("BALA BULLET-UFO:",String.valueOf(bullet.getSphere().center)+String.valueOf(bullet.getSphere().radius)+"---UFO:" + String.valueOf(ufo.getSphere().center)+":"+String.valueOf(ufo.getSphere().radius));
+                    spaceShip.getBullets().removeValue(bullet,true);
+                    world3D.addNumAlienDead(1);
+                    ufo.setDead(true);
+                }
+
+
+                }
+            for(Planet planet : world3D.getPlanets()){              // IMPACT BULLET-PLANET
+                if (planet.getSphere().overlaps(bullet.getSphere())){
+                    spaceShip.getBullets().removeValue(bullet,true);
+                }
+
+
             }
         }
+
+
+    }
+    private void controlUfos(){
+        Vector3 tmp = new Vector3();
+
+        if (world3D.getUfos().size==0){
+            if (world3D.getNumAlienDead()==World3D.NUMBER_ALIENS_GAME){
+                GameScreen.winGame =true;
+                GameScreen.endGame =true;
+                return;
+            }
+            world3D.initUfos();
+        }
+
+
+        for (Ufo ufo : world3D.getUfos()){
+
+            if (ufo.isDead() && ufo.getCronoExplosion()<=0){
+                world3D.getUfos().removeValue(ufo,true);
+            }
+
+            for(Planet planet : world3D.getPlanets()){
+
+                sphere.center.set(ufo.getSphere().center);
+                sphere.radius = ufo.getSphere().radius + 100;
+
+                if (sphere.overlaps(planet.getSphere())){
+                    ufo.setCrashPlanet(true);
+                }
+                else {
+                    ufo.setCrashPlanet(false);
+                }
+
+
+                if (planet.getSphere().overlaps(ufo.getSphere())){   // IMPACT UFO-PLANET
+                    world3D.getUfos().removeValue(ufo,true);
+                    world3D.addNumAlienDead(1);
+                }
+
+            }
+
+            if (ufo.getSphere().overlaps(spaceShip.getSphere())) {      // IMPACT UFO-SPACESHIP
+                Gdx.app.log("DATOS","CHOCANDO UFO - NAVE");
+            }
+        }
+    }
+
+    private void controlSpaceShip(){
+        Vector3 tmp = new Vector3();
+        for (Planet planet : world3D.getPlanets()){
+
+                if (planet.getSphere().overlaps(spaceShip.getSphere())){      // IMPACT PLANET - SPACESHIP
+                    Gdx.app.log("DATOS","CHOCANDO");
+                    GameScreen.winGame =false;
+                    GameScreen.endGame=true;
+                    return;
+
+                }
+        }
+        for (Ufo ufo : world3D.getUfos()){
+            if (ufo.getSphere().overlaps(spaceShip.getSphere())){       // IMPACT UFO - Spacechip
+                GameScreen.winGame =false;
+                GameScreen.endGame=true;
+                return;
+
+            }
+
+        }
+
+
+//        Gdx.app.log("SOL:", String.valueOf(world3D.getPlanets().get(0).getSphere().center)+ "- NAVE:"+String.valueOf(world3D.getSpaceShip().getSphere().center));
+//        Gdx.app.log("RADIO SOL:", String.valueOf(world3D.getPlanets().get(0).getSphere().radius)+ "- NAVE:"+String.valueOf(world3D.getSpaceShip().getSphere().radius));
+
 
     }
 
 
     public void update(float delta) {
 
+      //  Gdx.app.log("DATOS:",String.valueOf(world3D.getUfos().get(0).getPosition())+"VELOC:" + String.valueOf(world3D.getUfos().get(0).getVelocity()) + "-"+String.valueOf(world3D.getSpaceShip().getPosition()));
+
         updatePlanets(delta);
         updateSpaceShip(delta);
         updateUfos(delta);
         processInput();
+
+        controlUfos();
+        controlSpaceShip();
+        controlBullets();
     }
 
     private void processInput(){
