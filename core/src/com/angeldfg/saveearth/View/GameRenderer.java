@@ -9,6 +9,8 @@ import com.angeldfg.saveearth.Model.Radar;
 import com.angeldfg.saveearth.Model.SpaceShip;
 import com.angeldfg.saveearth.Model.Ufo;
 import com.angeldfg.saveearth.Model.World3D;
+import com.angeldfg.saveearth.Screen.GameScreen;
+import com.badlogic.gdx.Application;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.GL20;
@@ -78,8 +80,8 @@ public class GameRenderer {
 
     private StringBuffer stringBuffer;
 
-    private float CAMARE2D_ANCHO;
-    private float CAMARE2D_ALTO;
+    private float CAMARE2D_WIDTH;
+    private float CAMARE2D_HEIGHT;
 
 
     private ShapeRenderer shapeRenderer;
@@ -97,6 +99,7 @@ public class GameRenderer {
     private ParticleEffect effect;
     private ParticleSystem particleSystem;
 
+
     public GameRenderer(World3D world3d){
 
         camera3D = new PerspectiveCamera();
@@ -106,6 +109,7 @@ public class GameRenderer {
         stringBuffer = new StringBuffer();
 
         bitMapFont = new BitmapFont(Gdx.files.internal("fonts/font.fnt"), false);
+        bitMapFont.getData().scale(0.7f);
 
         fieldStars = new Sprite(LoadAssets.texture_static_fieldStars);
 
@@ -127,13 +131,20 @@ public class GameRenderer {
         this.world3d = world3d;
         spaceShip = world3d.getSpaceShip();
 
-        pointLightSpaceShip = new PointLight().set(1f, 0.5f, 0.5f, 100f, 0f, 0f, 2f);
+        pointLightSpaceShip = new PointLight().set(1f, 0.5f, 0.5f, 100f, 0f, 0f, 3f);
         pointLightSpaceShip.position.set(spaceShip.getPosition());
         environment.add(pointLightSpaceShip);
 
         temp1 = new Vector3();
         temp2 = new Vector3();
         shapeRenderer = new ShapeRenderer();
+
+
+        // SUN POINT LIGHT
+        pointLightSun = new PointLight();
+        pointLightSun.set(Color.YELLOW,0,0,0,19999999);
+
+        environment.add(pointLightSun);
 
 
         //Load instancesUfos
@@ -143,19 +154,8 @@ public class GameRenderer {
         pointLightUfo = new PointLight().set(0.5f, 1f, 0f, 2000f, 0f, 0f, 10f);
         pointLightUfo.setIntensity(500);
         environmentUfos.add(pointLightUfo);
+        environmentUfos.add(pointLightSun);
 
-/*        for (Ufo ufo : world3d.getUfos()){
-
-            ModelInstance modelInstance = new ModelInstance(modelUfo);
-            instancesUfos.add(modelInstance);
-            instances.add(modelInstance);
-
-            PointLight p = new PointLight().set(0.5f, 1f, 0f, 2000f, 0f, 0f, 10f);
-            p.setIntensity(5000);
-            pointLightUfos.add(p);
-            environment.add(p);
-        }
-*/
 
         // Load planets
         Model modelPlanet = LoadAssets.assets.get("planets/baseplanet.g3db",Model.class);
@@ -189,12 +189,6 @@ public class GameRenderer {
         Model modelSpaceShip = LoadAssets.assets.get("spaceship/spaceship.g3db",Model.class);
         instanceSpaceShip = new ModelInstance(modelSpaceShip);
        // instances.add(instanceSpaceShip);
-
-
-        pointLightSun = new PointLight();
-        pointLightSun.set(Color.YELLOW,0,0,0,19999999);
-
-        environment.add(pointLightSun);
 
 
         // Change text color
@@ -273,12 +267,12 @@ public class GameRenderer {
         float red = pointLightSpaceShip.color.r;
         if (changeColor) {
             red += 0.2f * delta;
-            pointLightSpaceShip.setIntensity(pointLightSpaceShip.intensity+0.5f*delta);
+            pointLightSpaceShip.setIntensity(pointLightSpaceShip.intensity+0.7f*delta);
         }
         else
         {
             red -= 0.2f * delta;
-            pointLightSpaceShip.setIntensity(pointLightSpaceShip.intensity-0.5f*delta);
+            pointLightSpaceShip.setIntensity(pointLightSpaceShip.intensity-0.7f*delta);
         }
 
         if (red>0.8f) {
@@ -304,6 +298,8 @@ public class GameRenderer {
         for (Bullet bullet : spaceShip.getBullets()){
 
             modelInstanceBullet.transform.set(bullet.getMatrix());
+            // Grown bullet while it is goint to Ufo
+            modelInstanceBullet.transform.scale(bullet.getScale()+100*delta,bullet.getScale()+100*delta,bullet.getScale()+100*delta );
             modelBatch.render(modelInstanceBullet);
 
         }
@@ -317,28 +313,104 @@ public class GameRenderer {
         Gdx.gl.glClearColor(0,0,0,1);
         Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT | GL20.GL_DEPTH_BUFFER_BIT);
 
-        updatePlanets(delta);
+        if ((GameScreen.isEndGame()) && (!GameScreen.winGame)){
+            temp1.set(world3d.getPlanets().get(3).getPosition().cpy());
+            temp1.rotate(world3d.getPlanets().get(3).getAngle_tran(),0,1,0);
+            temp2.set(temp1);
+            camera3D.position.set(temp1.sub(-500+world3d.getChronoEndGame()*100,-100,-100));
+            camera3D.lookAt(temp2);
 
+            camera3D.update();
 
-        // Update camera3d position => Back of Spaceship
-        temp1.set(spaceShip.getPosition());
-        camera3D.position.set(temp1.sub(spaceShip.getDirection().cpy().scl(1)));
-        camera3D.position.add(0,0.3f,0);
-
-        temp1.set(spaceShip.getPosition());
-        camera3D.direction.set(temp1.sub(camera3D.position));
-
-        camera3D.update();
-
-
-
-        sprite.begin();
+            sprite.begin();
             drawFieldStars(delta);
-        sprite.end();
+            sprite.end();
+            updatePlanets(delta);
 
 
-        updateUfos(delta);
-        modelBatch.begin(camera3D);
+            modelBatch.begin(camera3D);
+
+            modelBatch.render(instanceSun);
+
+            sprite.begin();
+            stringBuffer.setLength(0);
+            stringBuffer.append("YOU LOST...");
+            bitMapFont.setColor(Color.CYAN);
+            bitMapFont.getData().scale(-0.05f*delta);
+            bitMapFont.draw(sprite,stringBuffer,camera2D.viewportWidth/2-stringBuffer.length(),50);
+            sprite.end();
+
+            if (world3d.getChronoEndGame()>2){
+                modelBatch.render(instances,environment);
+            }
+            else{
+
+                effect.setTransform(world3d.getPlanets().get(3).getMatrix4());
+                effect.scale(World3D.SCALE_SUN*20,World3D.SCALE_SUN*20,World3D.SCALE_SUN*20);
+                particleSystem.update(); // technically not necessary for rendering
+                particleSystem.begin();
+                particleSystem.draw();
+                particleSystem.end();
+                modelBatch.render(particleSystem);
+            }
+
+
+            modelBatch.end();
+
+        }else if ((GameScreen.isEndGame()) && (GameScreen.winGame)){
+
+            temp1.set(world3d.getPlanets().get(3).getPosition().cpy());
+            temp1.rotate(world3d.getPlanets().get(3).getAngle_tran(),0,1,0);
+            temp2.set(temp1);
+            camera3D.position.set(temp1.sub(-100,-100,-100));
+            camera3D.lookAt(temp2);
+
+            camera3D.update();
+
+            sprite.begin();
+            drawFieldStars(delta);
+            sprite.end();
+            updatePlanets(delta);
+
+
+            modelBatch.begin(camera3D);
+            modelBatch.render(instanceSun);
+            modelBatch.render(instances,environment);
+
+            modelBatch.end();
+
+            sprite.begin();
+            stringBuffer.setLength(0);
+            stringBuffer.append("YOU SAVE THE EARTH...");
+            bitMapFont.setColor(Color.CYAN);
+            if ( bitMapFont.getScaleX()<3)
+                bitMapFont.getData().scale(+0.5f*delta);
+
+            bitMapFont.draw(sprite,stringBuffer,50,50);
+            sprite.end();
+
+
+        }
+        else {
+            // Update camera3d position => Back of Spaceship
+            temp1.set(spaceShip.getPosition());
+            camera3D.position.set(temp1.sub(spaceShip.getDirection().cpy().scl(1)));
+            camera3D.position.add(0,0.3f,0);
+
+            temp1.set(spaceShip.getPosition());
+            camera3D.direction.set(temp1.sub(camera3D.position));
+
+            camera3D.update();
+
+
+            sprite.begin();
+            drawFieldStars(delta);
+            sprite.end();
+
+            updatePlanets(delta);
+
+            updateUfos(delta);
+            modelBatch.begin(camera3D);
             updateBullets(delta);
             updateSpaceShip(delta);
             modelBatch.render(instanceSun);
@@ -346,18 +418,16 @@ public class GameRenderer {
             renderParticleEffects();
 
 
-        modelBatch.end();
+            modelBatch.end();
 
-        //debugger();
 
-        // CONTROLS 2D
-        sprite.begin();
+            // CONTROLS 2D
+            sprite.begin();
             drawControls();
             drawText();
             drawRadar();
-        sprite.end();
-
-
+            sprite.end();
+        }
 
     }
 
@@ -402,8 +472,6 @@ public class GameRenderer {
         temp1.set(earth.getPosition());
         temp1.rotate(earth.getAngle_tran(),0,1,0);
         temp2.set(spaceShip.getPosition());
-        //Gdx.app.log("DATOS: PLANETA:",String.valueOf(temp1)+" NAVE:"+ String.valueOf(temp2));
-        // temp2.rot(spaceShip.getMatrix());
 
         float distance = temp1.dst(temp2);
         temp1.sub(temp2);   // SUB  Ufos position from  SpaceShip position
@@ -470,7 +538,7 @@ public class GameRenderer {
         stringBuffer.append(String.valueOf((int)spaceShip.getVelocity()));
 
         stringBuffer.append("      "+"Aliens remain: " + String.valueOf(World3D.NUMBER_ALIENS_GAME-world3d.getNumAlienDead()));
-        bitMapFont.draw(sprite, stringBuffer, 100, 20);
+        bitMapFont.draw(sprite, stringBuffer, 100, 40);
 
 
 
@@ -483,25 +551,28 @@ public class GameRenderer {
      */
     private void drawControls(){
 
-        Rectangle control = Controls.size_controls.get(Controls.CONTROLS.UP);
-        /*
-        sprite.draw(LoadAssets.textures_controls.get(Controls.CONTROLS.UP),control.x,control.y,control.width,control.height);
-        control = Controls.size_controls.get(Controls.CONTROLS.DOWN);
-        sprite.draw(LoadAssets.textures_controls.get(Controls.CONTROLS.DOWN),control.x,control.y,control.width,control.height);
-        */
-        control = Controls.size_controls.get(Controls.CONTROLS.LEFT);
-        sprite.draw(LoadAssets.textures_controls.get(Controls.CONTROLS.LEFT),control.x,control.y,control.width,control.height);
-        control = Controls.size_controls.get(Controls.CONTROLS.RIGHT);
-        sprite.draw(LoadAssets.textures_controls.get(Controls.CONTROLS.RIGHT),control.x,control.y,control.width,control.height);
+        if (Gdx.app.getType()== Application.ApplicationType.Android){
+            Rectangle control = Controls.size_controls.get(Controls.CONTROLS.UP);
+            /*
+            sprite.draw(LoadAssets.textures_controls.get(Controls.CONTROLS.UP),control.x,control.y,control.width,control.height);
+            control = Controls.size_controls.get(Controls.CONTROLS.DOWN);
+            sprite.draw(LoadAssets.textures_controls.get(Controls.CONTROLS.DOWN),control.x,control.y,control.width,control.height);
+            */
+            control = Controls.size_controls.get(Controls.CONTROLS.LEFT);
+            sprite.draw(LoadAssets.textures_controls.get(Controls.CONTROLS.LEFT),control.x,control.y,control.width,control.height);
+            control = Controls.size_controls.get(Controls.CONTROLS.RIGHT);
+            sprite.draw(LoadAssets.textures_controls.get(Controls.CONTROLS.RIGHT),control.x,control.y,control.width,control.height);
 
-        control = Controls.size_controls.get(Controls.CONTROLS.ACCELERATE);
-        sprite.draw(LoadAssets.textures_controls.get(Controls.CONTROLS.ACCELERATE),control.x,control.y,control.width,control.height);
-        control = Controls.size_controls.get(Controls.CONTROLS.BRAKE);
-        sprite.draw(LoadAssets.textures_controls.get(Controls.CONTROLS.BRAKE),control.x,control.y,control.width,control.height);
+            control = Controls.size_controls.get(Controls.CONTROLS.ACCELERATE);
+            sprite.draw(LoadAssets.textures_controls.get(Controls.CONTROLS.ACCELERATE),control.x,control.y,control.width,control.height);
+            control = Controls.size_controls.get(Controls.CONTROLS.BRAKE);
+            sprite.draw(LoadAssets.textures_controls.get(Controls.CONTROLS.BRAKE),control.x,control.y,control.width,control.height);
 
-        control = Controls.size_controls.get(Controls.CONTROLS.FIRE);
-        sprite.draw(LoadAssets.textures_controls.get(Controls.CONTROLS.FIRE),control.x,control.y,control.width,control.height);
+            control = Controls.size_controls.get(Controls.CONTROLS.FIRE);
+            sprite.draw(LoadAssets.textures_controls.get(Controls.CONTROLS.FIRE),control.x,control.y,control.width,control.height);
 
+
+       }
 
     }
     public void resize(int width, int height){
@@ -517,10 +588,10 @@ public class GameRenderer {
         camera3D.update();
 
         float aspectRatio = (float) width / (float) height;
-        CAMARE2D_ANCHO=400*aspectRatio;
-        CAMARE2D_ALTO=400;
+        CAMARE2D_WIDTH =World3D.WOLRD2D_WIDTH;
+        CAMARE2D_HEIGHT =World3D.WOLRD2D_HEIGHT;
 
-        camera2D.setToOrtho(false, CAMARE2D_ANCHO, CAMARE2D_ALTO);
+        camera2D.setToOrtho(false, CAMARE2D_WIDTH, CAMARE2D_HEIGHT);
         camera2D.update();
 
         sprite.setProjectionMatrix(camera2D.combined);
@@ -554,7 +625,6 @@ public class GameRenderer {
             camera3D.project(temp1,0,0,camera2D.viewportWidth,camera2D.viewportHeight);
             shapeRenderer.circle(temp1.x,temp1.y,10);
 
-            Gdx.app.log("DATOS:",String.valueOf(temp1));
 
         }
 */
@@ -567,7 +637,6 @@ public class GameRenderer {
             camera3D.project(temp2,0,0,camera2D.viewportWidth,camera2D.viewportHeight);
             shapeRenderer.circle(temp1.x,temp1.y,temp2.sub(temp1).x);
 
-         //   Gdx.app.log("DATOS:",String.valueOf(temp1));
 
         }
 

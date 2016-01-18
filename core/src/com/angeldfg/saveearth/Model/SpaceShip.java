@@ -1,5 +1,6 @@
 package com.angeldfg.saveearth.Model;
 
+import com.angeldfg.saveearth.Assets.Sounds;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.math.Matrix4;
 import com.badlogic.gdx.math.Vector3;
@@ -12,7 +13,7 @@ import com.badlogic.gdx.utils.Array;
 public class SpaceShip {
     public static enum Keys {TURN_LEFT, TURN_RIGHT, UP, DOWN, ACCELERATE, BRAKE, STOP,IDLE};
 
-    public final static int MAX_NUM_BULLETS=5;
+    public final static int MAX_NUM_BULLETS=10;
 
     public static final float SCALE = World3D.SCALE_SUN/900;
     public static final float SCALE_FROM_BLENDER = 4.707f;
@@ -172,9 +173,11 @@ public class SpaceShip {
     }
 
     public void addBullet(Bullet bullet) {
-        if (chronoNextFire > 0 && chronoNextFire < 1)
+        if (chronoNextFire > 0 && chronoNextFire < 0.5f)
             return;
-        chronoNextFire=1;
+        Sounds.shoot.play();
+
+        chronoNextFire=0.5f;
         bullets.add(bullet);
         numBulletsActive++;
     }
@@ -191,7 +194,7 @@ public class SpaceShip {
 
         // Update fires
         for (Bullet bullet : bullets){
-            // wait 1 second to next fire
+            // wait 0.5f second to next fire
             bullet.update(delta);
             if (bullet.getChrono()<=0) {
                 bullets.removeValue(bullet,true);

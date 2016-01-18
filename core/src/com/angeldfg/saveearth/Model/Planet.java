@@ -39,19 +39,19 @@ public class Planet {
      * @param x: Pos x
      * @param y: Pos y
      * @param z: Pos z
-     * @param velocidaderotacion: Rotation velocity
-     * @param velocidadetraslacion: Translate velocity
-     * @param nomeplaneta: Planet Name
+     * @param rotationVelocity: Rotation velocity
+     * @param translationVelocity: Translate velocity
+     * @param planetName: Planet Name
      * @param scale: Scale
      */
-    public Planet(float x, float y, float z,float velocidaderotacion,float velocidadetraslacion,
-                  PLANET_NAMES nomeplaneta, float scale){
+    public Planet(float x, float y, float z,float rotationVelocity,float translationVelocity,
+                  PLANET_NAMES planetName, float scale){
 
         position = new Vector3(x,y,z);
-        this.trans_velocity =velocidadetraslacion;
-        this.rot_velocity =velocidaderotacion;
+        this.trans_velocity =translationVelocity;
+        this.rot_velocity =rotationVelocity;
         this.scale.set(scale,scale,scale);
-        this.name_planet=nomeplaneta;
+        this.name_planet=planetName;
 
 
         temp = new Vector3();

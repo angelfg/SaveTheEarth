@@ -12,10 +12,6 @@ import com.sun.org.apache.xpath.internal.operations.String;
  * Created by angel on 10/01/2016.
  */
 public class Ufo {
-    /**
-     * NUMBER OF UFOS
-     */
-    public static final int NUM_UFOS = 5;
 
 
     private float MIN_VELOCITY=SpaceShip.MAX_VELOCITY-200f;
@@ -93,7 +89,6 @@ public class Ufo {
         isDead=false;
 
 
-       // Gdx.app.log("DATOS:", "UFO DATA: Position:" + String.valueOf(position)+"- Velocity:" + String.valueOf(velocity)+" -SCALE:"+ String.valueOf(SCALE));
     }
 
     public Ufo(SpaceShip spaceship,Vector3 earthPosition){
@@ -138,14 +133,15 @@ public class Ufo {
      */
     public void update(float delta){
         tempvector.set(direction);
-/*
+
+
        if (crashPlanet){
             position.sub(direction.scl(velocity *delta));
         }
         else{
             position.add(direction.scl(velocity *delta));
         }
-*/
+
         if (isDead){
             cronoExplosion-=delta;
 
@@ -161,7 +157,7 @@ public class Ufo {
             matrix.rotate(rotation,angle_rot);
 
         }
- 
+
 
 
     }

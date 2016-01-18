@@ -3,6 +3,7 @@ package com.angeldfg.saveearth.Screen;
 
 import com.angeldfg.saveearth.Assets.Controls;
 import com.angeldfg.saveearth.Assets.LoadAssets;
+import com.angeldfg.saveearth.Assets.Sounds;
 import com.angeldfg.saveearth.Controller.GameController;
 import com.angeldfg.saveearth.Model.Radar;
 import com.angeldfg.saveearth.Model.World3D;
@@ -27,8 +28,10 @@ public class GameScreen implements Screen, InputProcessor {
     private SaveEarth principal;
     private GameController gameController;
 
-    public static boolean endGame;
+    private static boolean endGame;
     public static boolean winGame;
+
+    private boolean playFinalBomb;
 
     public GameScreen(SaveEarth principal){
         LoadAssets.loadGraphics();
@@ -38,21 +41,64 @@ public class GameScreen implements Screen, InputProcessor {
         gameRenderer = new GameRenderer(world3d);
         gameController = new GameController(world3d);
 
-        endGame =false;
+        endGame=false;
         winGame=false;
+
+        playFinalBomb = false;
     }
 
     @Override
     public void show() {
+
         Gdx.input.setInputProcessor(this);
+        if (!Sounds.music.isPlaying())
+            Sounds.music.play();
+
+
+
     }
 
     @Override
     public void render(float delta) {
 
-        gameController.update(delta);
-        gameRenderer.render(delta);
+        if (endGame) {
+            if (world3d.getChronoEndGame() <= 0) {
+                principal.setScreen(new PrincipalScreen(principal));
+                dispose();
+            }
+            if ((!playFinalBomb) && (world3d.getChronoEndGame() <= 2) && (!winGame)) {
+                Sounds.explosion.play(1);
+                playFinalBomb = true;
+            }
+        }
+
+        if (world3d.getChronoEndGame() > 0) {
+            gameController.update(delta);
+            gameRenderer.render(delta);
+        }
     }
+
+    public static void setEndGame(boolean endGame) {
+        if (Sounds.music.isPlaying()){
+            Sounds.music.stop();
+        }
+        if (winGame)
+        {
+            World3D.setChronoEndGame(11);
+            Sounds.applause.play();
+        }
+        else  {
+            Sounds.finalsound.play();
+        }
+        GameScreen.endGame = endGame;
+    }
+
+    public static boolean isEndGame() {
+        return endGame;
+    }
+
+
+
 
     @Override
     public void resize(int width, int height) {
@@ -61,12 +107,19 @@ public class GameScreen implements Screen, InputProcessor {
 
     @Override
     public void pause() {
+
         Gdx.input.setInputProcessor(null);
+        if (Sounds.music.isPlaying()){
+            Sounds.music.pause();
+        }
+
     }
 
     @Override
     public void resume() {
+
         Gdx.input.setInputProcessor(this);
+        Sounds.music.play();
     }
 
     @Override

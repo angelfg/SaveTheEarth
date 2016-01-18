@@ -1,13 +1,16 @@
 package com.angeldfg.saveearth.Assets;
 
 import com.angeldfg.saveearth.Model.Planet;
+import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.assets.AssetManager;
 import com.badlogic.gdx.assets.loaders.resolvers.InternalFileHandleResolver;
 import com.badlogic.gdx.graphics.Texture;
+import com.badlogic.gdx.graphics.g2d.TextureAtlas;
 import com.badlogic.gdx.graphics.g3d.Model;
 import com.badlogic.gdx.graphics.g3d.particles.ParticleEffect;
 import com.badlogic.gdx.graphics.g3d.particles.ParticleEffectLoader;
 import com.badlogic.gdx.graphics.g3d.particles.ParticleSystem;
+import com.badlogic.gdx.scenes.scene2d.ui.Skin;
 
 import java.util.EnumMap;
 import java.util.HashMap;
@@ -26,6 +29,9 @@ public class LoadAssets {
     public static Texture texture_static_earth;
     public static Texture texture_static_ufo;
     public static Texture texture_static_fieldStars;
+
+    public static Skin skin;
+
 
     public static EnumMap<Controls.CONTROLS, Texture> textures_controls = new EnumMap<Controls.CONTROLS, Texture>(Controls.CONTROLS.class);	// Pon o ENUM como key
 
@@ -63,7 +69,10 @@ public class LoadAssets {
         assets.load("spaceship/spaceship.g3db", Model.class);
         assets.load("ufo/ufo.g3db", Model.class);
 
-
+        assets.load("fonts/uiskin.atlas",TextureAtlas.class);
+        assets.finishLoading();
+        TextureAtlas atlas = assets.get("fonts/uiskin.atlas", TextureAtlas.class);
+        skin = new Skin(Gdx.files.internal("fonts/uiskin.json"), atlas); // Load styles
 
         assets.finishLoading();
 

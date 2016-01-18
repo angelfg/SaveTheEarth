@@ -6,15 +6,21 @@ import com.badlogic.gdx.utils.Array;
  * Created by angel on 04/01/2016.
  */
 public class World3D {
-    /**
-     * Os planetas e o sol do sistema solar
-     */
+
+    public final static int WOLRD2D_WIDTH=800;
+    public final static int WOLRD2D_HEIGHT=480;
+
 
     public final static int PIXEL_PER_2UNIT3D=50;
     public final static float SCALE_SUN=10f;    // 1 unit3d = 100000km
     public final static float SOLARSYSTEM_SIZE = 350*PIXEL_PER_2UNIT3D+SCALE_SUN*PIXEL_PER_2UNIT3D;    // PLUTON POSITION
 
-    public final static int NUMBER_ALIENS_GAME=20;
+    public final static int NUMBER_ALIENS_GAME=10;
+    /**
+     * NUMBER OF UFOS APPEARS
+     */
+    public static final int NUM_UFOS = 5;
+
     private Array<Planet> planets = new Array<Planet>();
 
     private Array<Ufo> ufos = new Array<Ufo>();
@@ -22,6 +28,8 @@ public class World3D {
     private SpaceShip spaceShip;
 
     private int numAlienDead;
+
+    private static float chronoEndGame=30;
 
     public World3D(){
 
@@ -40,11 +48,9 @@ public class World3D {
 
     public void initUfos(){
 
-        numAlienDead=0;
-        for (int cont = 0; cont < Ufo.NUM_UFOS; cont++){
-            ufos.add( new Ufo(planets.get(3).getPosition()));
+        for (int cont = 0; cont < NUM_UFOS; cont++) {
+            ufos.add(new Ufo(planets.get(3).getPosition()));
         }
-        ufos.add(new Ufo(spaceShip,planets.get(3).getPosition()));
 
     }
     /**
@@ -77,7 +83,7 @@ public class World3D {
     }
 
     public void addNumAlienDead(int numAlienDead) {
-        this.numAlienDead += 1;
+        this.numAlienDead += numAlienDead;
     }
 
     /**
@@ -93,5 +99,16 @@ public class World3D {
         return spaceShip;
     }
 
+    public static float getChronoEndGame() {
+        return chronoEndGame;
+    }
+
+    public static void setChronoEndGame(float time) {
+        chronoEndGame = time;
+    }
+
+    public static void subChronoEndGame(float time) {
+        chronoEndGame-=time;
+    }
 
 }

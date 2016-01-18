@@ -25,7 +25,7 @@ public class Bullet {
 
     private Vector3 temp;
 
-    private float chrono=5;
+    private float chrono=8;
 
 
     public Bullet(){
@@ -39,7 +39,7 @@ public class Bullet {
      * @param angle_rot: angle rot spaceship
      */
     public Bullet(Matrix4 matrix, Vector3 direction,float velocity) {
-        this.velocity = velocity+300;
+        this.velocity = velocity+350;
         this.direction = direction;
         this.matrix=matrix;
 
@@ -96,6 +96,10 @@ public class Bullet {
 
     public Sphere getSphere() {
         return sphere;
+    }
+
+    public float getScale() {
+        return scale;
     }
 
 }
