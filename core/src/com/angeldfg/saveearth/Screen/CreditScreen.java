@@ -79,7 +79,7 @@ public class CreditScreen implements Screen {
         table.add(title);
         stage.addActor(table);
 
-        title = new Label("Graphics: \n  * Planet textures: http://www.solarsystemscope.com/nexus/textures/planet_textures/ \n  * SpaceShip: http://opengameart.org/content/racing-ship-2d3d (Jonathan Wayman) \n  * Ufo: http://macmave.blogspot.com.es/2014/07/free-ufo-3d-model.html (Mittwoch) \n  * Radar: http://opengameart.org/content/space-assets (priest865) \n  * Earth Texture: https://static.pexels.com/photos/2422/sky-earth-galaxy-universe.jpg \n  * FieldStar: https://upload.wikimedia.org/wikipedia/commons/8/80/Hyades.jpg \n  * Shoot: www.iconarchive.com/show/captiva-icons-by-bokehlicia/button-icon.html \n        (bokehlicia) \n  * Particle Effect: https://github.com/libgdx/libgdx/wiki/3D-Particle-Effects",skin);
+        title = new Label("Graphics: \n  * Planet textures: http://www.solarsystemscope.com/nexus/textures/planet_textures/ \n  * SpaceShip: http://opengameart.org/content/racing-ship-2d3d (Jonathan Wayman) \n  * Ufo: http://www.3dcadbrowser.com/download.aspx?3dmodel=14165 ( 9KILLA2CALI5) \n  * Radar: http://opengameart.org/content/space-assets (priest865) \n  * Earth Texture: https://static.pexels.com/photos/2422/sky-earth-galaxy-universe.jpg \n  * FieldStar: https://upload.wikimedia.org/wikipedia/commons/8/80/Hyades.jpg \n  * Shoot: www.iconarchive.com/show/captiva-icons-by-bokehlicia/button-icon.html \n        (bokehlicia) \n  * Particle Effect: https://github.com/libgdx/libgdx/wiki/3D-Particle-Effects",skin);
         title.setColor(Color.CYAN);
         title.setFontScale(1f);
         title.setAlignment(Align.left);

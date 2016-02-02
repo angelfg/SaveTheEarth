@@ -27,6 +27,7 @@ public class GameScreen implements Screen, InputProcessor {
     private GameRenderer gameRenderer;
     private SaveEarth principal;
     private GameController gameController;
+    private LoadAssets loadAssets;
 
     private static boolean endGame;
     public static boolean winGame;
@@ -34,11 +35,12 @@ public class GameScreen implements Screen, InputProcessor {
     private boolean playFinalBomb;
 
     public GameScreen(SaveEarth principal){
-        LoadAssets.loadGraphics();
+        loadAssets = new LoadAssets();
+        loadAssets.loadGraphics();
 
         world3d = new World3D();
         this.principal=principal;
-        gameRenderer = new GameRenderer(world3d);
+        gameRenderer = new GameRenderer(world3d,loadAssets.getAssets());
         gameController = new GameController(world3d);
 
         endGame=false;
@@ -130,7 +132,7 @@ public class GameScreen implements Screen, InputProcessor {
     @Override
     public void dispose() {
         gameRenderer.dispose();
-        LoadAssets.disposeGraphics();
+        loadAssets.disposeGraphics();
     }
 
     @Override

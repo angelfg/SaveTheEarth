@@ -29,15 +29,17 @@ public class World3D {
 
     private int numAlienDead;
 
-    private static float chronoEndGame=30;
+    private static float chronoEndGame;
 
     public World3D(){
+
+        chronoEndGame=30;
+        numAlienDead=0;
 
         initPlanet();
         initSpaceShips();
         initUfos();
 
-        numAlienDead=0;
 
     }
 

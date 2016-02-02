@@ -12,6 +12,8 @@ import com.angeldfg.saveearth.Model.World3D;
 import com.angeldfg.saveearth.Screen.GameScreen;
 import com.badlogic.gdx.Application;
 import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.assets.AssetManager;
+import com.badlogic.gdx.assets.loaders.resolvers.InternalFileHandleResolver;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.OrthographicCamera;
@@ -31,6 +33,7 @@ import com.badlogic.gdx.graphics.g3d.attributes.FloatAttribute;
 import com.badlogic.gdx.graphics.g3d.attributes.TextureAttribute;
 import com.badlogic.gdx.graphics.g3d.environment.PointLight;
 import com.badlogic.gdx.graphics.g3d.particles.ParticleEffect;
+import com.badlogic.gdx.graphics.g3d.particles.ParticleEffectLoader;
 import com.badlogic.gdx.graphics.g3d.particles.ParticleSystem;
 import com.badlogic.gdx.graphics.g3d.particles.batches.PointSpriteParticleBatch;
 import com.badlogic.gdx.graphics.g3d.utils.ModelBuilder;
@@ -97,10 +100,12 @@ public class GameRenderer {
     private ModelInstance modelInstanceUfo;
 
     private ParticleEffect effect;
-    private ParticleSystem particleSystem;
 
+    private AssetManager assets;
 
-    public GameRenderer(World3D world3d){
+    public GameRenderer(World3D world3d,AssetManager assets){
+
+        this.assets=assets;
 
         camera3D = new PerspectiveCamera();
         camera2D = new OrthographicCamera();
@@ -148,7 +153,7 @@ public class GameRenderer {
 
 
         //Load instancesUfos
-        Model modelUfo = LoadAssets.assets.get("ufo/ufo.g3db",Model.class);
+        Model modelUfo = assets.get("ufo/ufo.g3db",Model.class);
         modelInstanceUfo =  new ModelInstance(modelUfo);
 
         pointLightUfo = new PointLight().set(0.5f, 1f, 0f, 2000f, 0f, 0f, 10f);
@@ -158,7 +163,7 @@ public class GameRenderer {
 
 
         // Load planets
-        Model modelPlanet = LoadAssets.assets.get("planets/baseplanet.g3db",Model.class);
+        Model modelPlanet = assets.get("planets/baseplanet.g3db",Model.class);
         for (Planet planet : world3d.getPlanets()){
 
             ModelInstance modelInstance = new ModelInstance(modelPlanet);
@@ -186,7 +191,7 @@ public class GameRenderer {
 
 
         // Load SpaceShip
-        Model modelSpaceShip = LoadAssets.assets.get("spaceship/spaceship.g3db",Model.class);
+        Model modelSpaceShip = assets.get("spaceship/spaceship.g3db",Model.class);
         instanceSpaceShip = new ModelInstance(modelSpaceShip);
        // instances.add(instanceSpaceShip);
 
@@ -196,17 +201,13 @@ public class GameRenderer {
 
 
 
-        particleSystem = ParticleSystem.get();
-        PointSpriteParticleBatch pointSpriteBatch = new PointSpriteParticleBatch();
-        pointSpriteBatch.setCamera(camera3D);
-        particleSystem.add(pointSpriteBatch);
 
-        LoadAssets.loadParticleEffects3D(particleSystem);
-        ParticleEffect originalEffect = LoadAssets.assets.get("particle3d/explosion.pfx");
+        LoadAssets.pointSpriteParticleBatch.setCamera(camera3D);
+        ParticleEffect originalEffect = assets.get("particle3d/explosion.pfx");
         effect = originalEffect.copy();
         effect.init();
         effect.start();  // optional: particle will begin playing immediately
-        particleSystem.add(effect);
+        LoadAssets.particleSystem.add(effect);
 
     }
 
@@ -216,11 +217,11 @@ public class GameRenderer {
             if (ufo.isDead()){
                 effect.setTransform(ufo.getMatrix());
                 effect.scale(ufo.getScale()*100,ufo.getScale()*100,ufo.getScale()*100);
-                particleSystem.update(); // technically not necessary for rendering
-                particleSystem.begin();
-                particleSystem.draw();
-                particleSystem.end();
-                modelBatch.render(particleSystem);
+                LoadAssets.particleSystem.update(); // technically not necessary for rendering
+                LoadAssets.particleSystem.begin();
+                LoadAssets.particleSystem.draw();
+                LoadAssets.particleSystem.end();
+                modelBatch.render(LoadAssets.particleSystem);
             }
         }
     }
@@ -347,11 +348,11 @@ public class GameRenderer {
 
                 effect.setTransform(world3d.getPlanets().get(3).getMatrix4());
                 effect.scale(World3D.SCALE_SUN*20,World3D.SCALE_SUN*20,World3D.SCALE_SUN*20);
-                particleSystem.update(); // technically not necessary for rendering
-                particleSystem.begin();
-                particleSystem.draw();
-                particleSystem.end();
-                modelBatch.render(particleSystem);
+                LoadAssets.particleSystem.update(); // technically not necessary for rendering
+                LoadAssets.particleSystem.begin();
+                LoadAssets.particleSystem.draw();
+                LoadAssets.particleSystem.end();
+                modelBatch.render(LoadAssets.particleSystem);
             }
 
 
