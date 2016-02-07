@@ -5,6 +5,7 @@ import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.assets.AssetManager;
 import com.badlogic.gdx.assets.loaders.resolvers.InternalFileHandleResolver;
 import com.badlogic.gdx.graphics.Texture;
+import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.TextureAtlas;
 import com.badlogic.gdx.graphics.g3d.Model;
 import com.badlogic.gdx.graphics.g3d.particles.ParticleEffect;
@@ -21,7 +22,6 @@ import java.util.HashMap;
  */
 public class LoadAssets {
 
-    public AssetManager assets;
 
     public static HashMap<Planet.PLANET_NAMES,Texture> texture_planets = new
             HashMap<Planet.PLANET_NAMES,Texture>();
@@ -35,15 +35,22 @@ public class LoadAssets {
     public static ParticleSystem particleSystem;
     public static PointSpriteParticleBatch pointSpriteParticleBatch;
 
+    public static Model modelUfo;
+    public static Model modelPlanet;
+    public static Model modelSpaceShip;
+    public static ParticleEffect effect;
 
+    public static TextureAtlas atlas;
 
     public static EnumMap<Controls.CONTROLS, Texture> textures_controls = new EnumMap<Controls.CONTROLS, Texture>(Controls.CONTROLS.class);	// Pon o ENUM como key
 
-    public LoadAssets(){
-        assets = new AssetManager();
-    }
+    private static AssetManager assets;
 
-    public void loadGraphics(){
+
+    public static void loadGraphics(){
+
+        assets = new AssetManager();
+
         texture_planets.put(Planet.PLANET_NAMES.SOL, new Texture("planets/sun.jpg"));
         texture_planets.put(Planet.PLANET_NAMES.MERCURIO, new Texture("planets/mercury.jpg"));
         texture_planets.put(Planet.PLANET_NAMES.VENUS, new Texture("planets/venus.jpg"));
@@ -78,7 +85,6 @@ public class LoadAssets {
 
         assets.load("fonts/uiskin.atlas",TextureAtlas.class);
 
-
         // Particle System 3D
         particleSystem = ParticleSystem.get();
         particleSystem.getBatches().clear();
@@ -92,23 +98,33 @@ public class LoadAssets {
 
         assets.finishLoading();
 
-        TextureAtlas atlas = assets.get("fonts/uiskin.atlas", TextureAtlas.class);
-        skin = new Skin(Gdx.files.internal("fonts/uiskin.json"), atlas); // Load styles
+        atlas = assets.get("fonts/uiskin.atlas", TextureAtlas.class);
+
+        modelUfo = assets.get("ufo/ufo.g3db",Model.class);
+        modelPlanet = assets.get("planets/baseplanet.g3db",Model.class);
+        modelSpaceShip=assets.get("spaceship/spaceship.g3db",Model.class);
+
+
+        ParticleEffect originalEffect = assets.get("particle3d/explosion.pfx");
+        effect = originalEffect.copy();
+        effect.init();
+        effect.start();  // optional: particle will begin playing immediately
+        particleSystem.add(effect);
 
 
     }
 
-    public AssetManager getAssets() {
-        return assets;
-    }
 
+    public static void disposeGraphics(){
+        modelUfo.dispose();
+        modelPlanet.dispose();
+        modelSpaceShip.dispose();
+        effect.dispose();
 
-    public void disposeGraphics(){
-
-        assets.clear();
         for (Texture textura : texture_planets.values()){
             textura.dispose();
         }
+        atlas.dispose();
 
     }
     

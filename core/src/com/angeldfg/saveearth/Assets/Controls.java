@@ -1,5 +1,6 @@
 package com.angeldfg.saveearth.Assets;
 
+import com.angeldfg.saveearth.Model.World3D;
 import com.angeldfg.saveearth.View.GameRenderer;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.math.Rectangle;
@@ -18,13 +19,11 @@ public class Controls {
 
     public static void changeSizeControls(){
 
-        OrthographicCamera cam2d= GameRenderer.getCamera2D();
-
-        size_controls.put(CONTROLS.DOWN,new Rectangle(cam2d.viewportWidth-SIZE*2,10,SIZE,SIZE));
-        size_controls.put(CONTROLS.UP,new Rectangle(cam2d.viewportWidth-SIZE*2,SIZE*2+10,SIZE,SIZE));
-        size_controls.put(CONTROLS.RIGHT,new Rectangle(cam2d.viewportWidth-SIZE,SIZE+10,SIZE,SIZE));
-        size_controls.put(CONTROLS.LEFT,new Rectangle(cam2d.viewportWidth-SIZE*4,SIZE+10,SIZE,SIZE));
-        size_controls.put(CONTROLS.FIRE,new Rectangle(cam2d.viewportWidth-SIZE*3f,SIZE-10,SIZE*2,SIZE*2));
+        size_controls.put(CONTROLS.DOWN,new Rectangle(World3D.WOLRD2D_WIDTH-SIZE*2,10,SIZE,SIZE));
+        size_controls.put(CONTROLS.UP,new Rectangle(World3D.WOLRD2D_WIDTH-SIZE*2,SIZE*2+10,SIZE,SIZE));
+        size_controls.put(CONTROLS.RIGHT,new Rectangle(World3D.WOLRD2D_WIDTH-SIZE,SIZE+10,SIZE,SIZE));
+        size_controls.put(CONTROLS.LEFT,new Rectangle(World3D.WOLRD2D_WIDTH-SIZE*4,SIZE+10,SIZE,SIZE));
+        size_controls.put(CONTROLS.FIRE,new Rectangle(World3D.WOLRD2D_WIDTH-SIZE*3f,SIZE-10,SIZE*2,SIZE*2));
 
         size_controls.put(CONTROLS.ACCELERATE,new Rectangle(5,SIZE*3,SIZE,SIZE));
         size_controls.put(CONTROLS.BRAKE,new Rectangle(5,SIZE,SIZE,SIZE));

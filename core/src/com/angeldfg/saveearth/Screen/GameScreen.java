@@ -35,12 +35,10 @@ public class GameScreen implements Screen, InputProcessor {
     private boolean playFinalBomb;
 
     public GameScreen(SaveEarth principal){
-        loadAssets = new LoadAssets();
-        loadAssets.loadGraphics();
 
         world3d = new World3D();
         this.principal=principal;
-        gameRenderer = new GameRenderer(world3d,loadAssets.getAssets());
+        gameRenderer = new GameRenderer(world3d);
         gameController = new GameController(world3d);
 
         endGame=false;
@@ -132,8 +130,7 @@ public class GameScreen implements Screen, InputProcessor {
     @Override
     public void dispose() {
         gameRenderer.dispose();
-        loadAssets.disposeGraphics();
-    }
+   }
 
     @Override
     public boolean keyDown(int keycode) {
@@ -188,7 +185,9 @@ public class GameScreen implements Screen, InputProcessor {
     public boolean touchDown(int screenX, int screenY, int pointer, int button) {
         // TODO Auto-generated method stub
         Vector3 coord = new Vector3(screenX,screenY,0);
-        GameRenderer.getCamera2D().unproject(coord);
+
+
+        gameRenderer.getCamera2D().unproject(coord);
         Circle press = new Circle(coord.x,coord.y, Controls.SIZE/4);
 
         if (Intersector.overlaps(press, Radar.size_radar)){
@@ -231,7 +230,7 @@ public class GameScreen implements Screen, InputProcessor {
     public boolean touchUp(int screenX, int screenY, int pointer, int button) {
         // TODO Auto-generated method stub
         Vector3 coord = new Vector3(screenX,screenY,0);
-        GameRenderer.getCamera2D().unproject(coord);
+        gameRenderer.getCamera2D().unproject(coord);
         Circle press = new Circle(coord.x,coord.y, Controls.SIZE/4);
         boolean enter=false;
 

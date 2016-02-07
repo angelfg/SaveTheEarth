@@ -1,6 +1,7 @@
 package com.angeldfg.saveearth.Model;
 
 import com.angeldfg.saveearth.View.GameRenderer;
+import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.math.Rectangle;
 
@@ -25,10 +26,8 @@ public class Radar {
      */
     public static void changeSizeRadar(){
 
-        OrthographicCamera cam2d= GameRenderer.getCamera2D();
-
-        size_radar = new Rectangle(0,cam2d.viewportHeight/2,cam2d.viewportWidth/4,cam2d.viewportHeight-cam2d.viewportHeight/2);
-        size_radar_minimized = new Rectangle(0,cam2d.viewportHeight-30,30,30);
+        size_radar = new Rectangle(0,World3D.WOLRD2D_HEIGHT/2,World3D.WOLRD2D_WIDTH/4,World3D.WOLRD2D_HEIGHT-World3D.WOLRD2D_HEIGHT/2);
+        size_radar_minimized = new Rectangle(0,World3D.WOLRD2D_HEIGHT-30,30,30);
 
     }
 

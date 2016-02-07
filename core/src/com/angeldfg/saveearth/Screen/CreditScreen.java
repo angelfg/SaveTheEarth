@@ -1,5 +1,6 @@
 package com.angeldfg.saveearth.Screen;
 
+import com.angeldfg.saveearth.Assets.LoadAssets;
 import com.angeldfg.saveearth.Assets.Sounds;
 import com.angeldfg.saveearth.Model.World3D;
 import com.angeldfg.saveearth.SaveEarth;
@@ -27,29 +28,22 @@ import com.badlogic.gdx.utils.viewport.FitViewport;
  */
 public class CreditScreen implements Screen {
 
-    private AssetManager assetManager;
     private Skin skin;
     private Stage stage;
 
     private SaveEarth principal;
+    private FitViewport fitViewPort;
 
     public CreditScreen(SaveEarth principal){
 
         this.principal=principal;
 
-        assetManager = new AssetManager();
-        assetManager.load("fonts/uiskin.atlas",TextureAtlas.class);
-        assetManager.finishLoading();
-        TextureAtlas atlas = assetManager.get("fonts/uiskin.atlas", TextureAtlas.class);
-        skin = new Skin(Gdx.files.internal("fonts/uiskin.json"), atlas); // Cargamos os estilos
+        skin = new Skin(Gdx.files.internal("fonts/uiskin.json"), LoadAssets.atlas); // Cargamos os estilos
 
         stage = new Stage();
-        FillViewport fitViewPort = new FillViewport(World3D.WOLRD2D_WIDTH,World3D.WOLRD2D_HEIGHT);
-        stage.setViewport(fitViewPort);
+        fitViewPort = new FitViewport(World3D.WOLRD2D_WIDTH,World3D.WOLRD2D_HEIGHT);
         loadGraphicsElements();
         stage.setViewport(fitViewPort);
-
-        loadGraphicsElements();
 
     }
 
@@ -64,30 +58,28 @@ public class CreditScreen implements Screen {
 
         Label title = new Label("SAVE THE EARTH GAME",skin);
         title.setColor(Color.RED);
-        title.setFontScale(1.5f);
+        title.setFontScale(1f);
         title.setAlignment(Align.center);
 
         table.add(title);
 
         table.row();
 
-        title = new Label("Programming by Angel D. Fernández González. http://about.me/angeldfg",skin);
+        title = new Label("Programming by Angel D. Fernández González. http://about.me/angeldfg",skin,"optional");
         title.setColor(Color.YELLOW);
-        title.setFontScale(1f);
         title.setAlignment(Align.center);
 
         table.add(title);
         stage.addActor(table);
 
-        title = new Label("Graphics: \n  * Planet textures: http://www.solarsystemscope.com/nexus/textures/planet_textures/ \n  * SpaceShip: http://opengameart.org/content/racing-ship-2d3d (Jonathan Wayman) \n  * Ufo: http://www.3dcadbrowser.com/download.aspx?3dmodel=14165 ( 9KILLA2CALI5) \n  * Radar: http://opengameart.org/content/space-assets (priest865) \n  * Earth Texture: https://static.pexels.com/photos/2422/sky-earth-galaxy-universe.jpg \n  * FieldStar: https://upload.wikimedia.org/wikipedia/commons/8/80/Hyades.jpg \n  * Shoot: www.iconarchive.com/show/captiva-icons-by-bokehlicia/button-icon.html \n        (bokehlicia) \n  * Particle Effect: https://github.com/libgdx/libgdx/wiki/3D-Particle-Effects",skin);
+        title = new Label("Graphics: \n  * Planet textures: http://www.solarsystemscope.com/nexus/textures/planet_textures/ \n  * SpaceShip: http://opengameart.org/content/racing-ship-2d3d (Jonathan Wayman) \n  * Ufo: http://www.3dcadbrowser.com/download.aspx?3dmodel=14165 ( 9KILLA2CALI5) \n  * Radar: http://opengameart.org/content/space-assets (priest865) \n  * Earth Texture: https://static.pexels.com/photos/2422/sky-earth-galaxy-universe.jpg \n  * FieldStar: https://upload.wikimedia.org/wikipedia/commons/8/80/Hyades.jpg \n  * Shoot: www.iconarchive.com/show/captiva-icons-by-bokehlicia/button-icon.html \n        (bokehlicia) \n  * Particle Effect: https://github.com/libgdx/libgdx/wiki/3D-Particle-Effects",skin,"optional");
         title.setColor(Color.CYAN);
-        title.setFontScale(1f);
         title.setAlignment(Align.left);
         title.setPosition(50, 190);
 
         stage.addActor(title);
 
-        title = new Label("Music and Sounds: \n  * Shoot: http://www.freesound.org/people/211redman112/sounds/234083/ \n      (211redman112) \n  * Final Sound: http://www.freesound.org/people/cristianob_/sounds/183991/ \n      (cristianob_) \n  * Applause: http://www.freesound.org/people/Littleboot/sounds/198091/ (Littleboot) \n  * Bomb: http://www.freesound.org/people/dkmedic/sounds/104439/ (dkmedic) \n  * Music Space Trip: http://www.dl-sounds.com/royalty-free/space-trip/ (DL Sounds) \n ",skin);
+        title = new Label("Music and Sounds: \n  * Shoot: http://www.freesound.org/people/211redman112/sounds/234083/ \n      (211redman112) \n  * Final Sound: http://www.freesound.org/people/cristianob_/sounds/183991/ \n      (cristianob_) \n  * Applause: http://www.freesound.org/people/Littleboot/sounds/198091/ (Littleboot) \n  * Bomb: http://www.freesound.org/people/dkmedic/sounds/104439/ (dkmedic) \n  * Music Space Trip: http://www.dl-sounds.com/royalty-free/space-trip/ (DL Sounds) \n ",skin,"optional");
         title.setColor(Color.CORAL);
         title.setFontScale(1f);
         title.setAlignment(Align.left);
@@ -121,8 +113,6 @@ public class CreditScreen implements Screen {
     public void dispose() {
 
         Gdx.input.setInputProcessor(null);
-        assetManager.dispose();
-        skin.dispose();
         stage.dispose();
     }
 

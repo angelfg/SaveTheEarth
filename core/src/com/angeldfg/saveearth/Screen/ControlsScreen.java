@@ -70,6 +70,7 @@ public class ControlsScreen implements Screen {
     @Override
     public void resize(int width, int height) {
         // TODO Auto-generated method stub
+        Gdx.gl.glViewport( 0, 0, width, height);
 
         camera2D.setToOrtho(false,World3D.WOLRD2D_WIDTH,World3D.WOLRD2D_HEIGHT);
         camera2D.update();

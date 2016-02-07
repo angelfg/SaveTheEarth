@@ -41,7 +41,7 @@ public class SpaceShip {
     /**
      * Max velocity
      */
-    public final static float MAX_VELOCITY =300f;
+    public final static float MAX_VELOCITY =500f;
     /**
      * Rotation velocity
      */

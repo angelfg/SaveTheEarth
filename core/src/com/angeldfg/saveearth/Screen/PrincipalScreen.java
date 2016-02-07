@@ -1,5 +1,6 @@
 package com.angeldfg.saveearth.Screen;
 
+import com.angeldfg.saveearth.Assets.LoadAssets;
 import com.angeldfg.saveearth.Assets.Sounds;
 import com.angeldfg.saveearth.Model.World3D;
 import com.angeldfg.saveearth.SaveEarth;
@@ -21,27 +22,24 @@ import com.badlogic.gdx.scenes.scene2d.ui.TextButton;
 import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
 import com.badlogic.gdx.utils.Align;
 import com.badlogic.gdx.utils.viewport.FillViewport;
+import com.badlogic.gdx.utils.viewport.FitViewport;
 
 /**
  * Created by angel on 17/01/2016.
  */
 public class PrincipalScreen implements Screen {
 
-    private AssetManager assetManager;
     private Skin skin;
     private Stage stage;
 
     private SaveEarth principal;
+    private FitViewport fitViewPort;
 
     public PrincipalScreen(SaveEarth principal){
 
         this.principal=principal;
 
-        assetManager = new AssetManager();
-        assetManager.load("fonts/uiskin.atlas",TextureAtlas.class);
-        assetManager.finishLoading();
-        TextureAtlas atlas = assetManager.get("fonts/uiskin.atlas", TextureAtlas.class);
-        skin = new Skin(Gdx.files.internal("fonts/uiskin.json"), atlas); // Cargamos os estilos
+        skin = new Skin(Gdx.files.internal("fonts/uiskin.json"), LoadAssets.atlas); // Cargamos os estilos
 
         Gdx.input.setCatchBackKey(true);
         stage = new Stage(){
@@ -55,7 +53,7 @@ public class PrincipalScreen implements Screen {
         };
         Gdx.input.setInputProcessor(stage);
 
-        FillViewport fitViewPort = new FillViewport(World3D.WOLRD2D_WIDTH,World3D.WOLRD2D_HEIGHT);
+        fitViewPort = new FitViewport(World3D.WOLRD2D_WIDTH,World3D.WOLRD2D_HEIGHT);
         stage.setViewport(fitViewPort);
         loadGraphicsElements();
 
@@ -67,12 +65,12 @@ public class PrincipalScreen implements Screen {
         table.setFillParent(true);
         table.defaults().space(10);
         table.defaults().height(50);
-        table.defaults().fillX();
+        table.defaults().width(500);
         table.align(Align.top|Align.center);
 
         Label title = new Label("SAVE THE EARTH GAME",skin);
         title.setColor(Color.RED);
-        title.setFontScale(3);
+        title.setFontScale(1f);
 //        title.setBounds(0, 100, Gdx.graphics.getWidth(), 10);
         title.setAlignment(Align.center|Align.top);
         table.add(title);
@@ -82,7 +80,7 @@ public class PrincipalScreen implements Screen {
 
         title = new Label("Libgdx Jam 2015",skin);
         title.setColor(Color.RED);
-        title.setFontScale(2);
+        title.setFontScale(0.5f);
 //        title.setBounds(0, 100, Gdx.graphics.getWidth(), 10);
         title.setAlignment(Align.center);
   //      title.setPosition(20, 40);
@@ -140,7 +138,7 @@ public class PrincipalScreen implements Screen {
 
         title = new Label("You must stop the aliens arrive on Earth ...",skin);
         title.setColor(Color.GREEN);
-        title.setFontScale(2f);
+        title.setFontScale(0.5f);
         title.setAlignment(Align.left);
         table.add(title);
 
@@ -148,7 +146,7 @@ public class PrincipalScreen implements Screen {
 
         title = new Label("We need you",skin);
         title.setColor(Color.GREEN);
-        title.setFontScale(1.5f);
+        title.setFontScale(1f);
         title.setAlignment(Align.left);
         table.add(title);
 
@@ -157,7 +155,7 @@ public class PrincipalScreen implements Screen {
     }
 
     private void showExitDialog(){
-        new Dialog("Exit Game", skin, "dialog") { // Os acentos non aparecen xa que non están no png das letras
+        Dialog dialog = new Dialog("Exit Game", skin, "dialog") { // Os acentos non aparecen xa que non están no png das letras
             protected void result (Object object) {
                 if ((Boolean) object)
                     if (((Boolean) object).booleanValue()) {
@@ -169,8 +167,10 @@ public class PrincipalScreen implements Screen {
                 .button("Yes", true)
                 .button("No",false)
                 .key(Input.Keys.ENTER, true)
-                .key(Input.Keys.ESCAPE, false)
-                .show(stage);
+                .key(Input.Keys.ESCAPE, false);
+        dialog.show(stage);
+
+
 
     }
 
@@ -178,6 +178,7 @@ public class PrincipalScreen implements Screen {
     public void render(float delta) {
         Gdx.gl.glClearColor(0, 0, 0, 1);
         Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT | GL20.GL_DEPTH_BUFFER_BIT);
+
 
         stage.act(Gdx.graphics.getDeltaTime());
         stage.draw();
@@ -194,9 +195,6 @@ public class PrincipalScreen implements Screen {
         Sounds.stopMusic();
 
         Gdx.input.setInputProcessor(null);
-        assetManager.dispose();
-        skin.dispose();
-
         stage.dispose();
 
     }
