@@ -1,5 +1,5 @@
 # SaveTheEarth
-Libgdx Jam 2015
+Libgdx Jam 2015: https://itch.io/jam/libgdxjam/rate/49644
 
 Game name: Save the Earth.
 
@@ -9,3 +9,5 @@ History: Aliens invades the Earth You must destroy them before they arrive at Ea
 
 
 Final Release
+
+
